@@ -46,15 +46,31 @@ Clustering/
 │  
 ├── input/                  # original png images  
 ├── output/                 # compressed images  
-├── plots/                  # different plots for the essay  
-├── data/                   # npy binary files  
+├── plots/                  # different plots for the essay
 │  
 ├── src/                    # source code  
-│   ├── deconstruct.py      # image -> npy  
-│   ├── reconstruct.py      # npy + colors -> Image  
+│   ├── deconstruct.py      # image -> array  
+│   ├── reconstruct.py      # array + colors -> Image  
 │   ├── cluster.py          # the core mathematics  
 │   └── run.py              # run the comparisons  
 │  
 ├── documentation.md        # detailed explanations here  
 ├── requirements.txt        # list of dependencies  
-└── README.md               # yeah  
+└── README.md               # project overview 
+
+
+<br><br>
+
+## Discussion: Coresets in Modern Big Data Analysis
+
+**The Image as a Diagnostic Medium**  
+While this implementation processes image pixels, the primary objective is not to compete with dedicated commercial image codecs. Instead, the image serves as a high-density, multi-dimensional dataset to visually validate the coreset extraction algorithm. By mapping the abstract mathematical output of a clustering algorithm back into a 2D spatial grid, the visual fidelity of the image provides immediate, observable proof of the algorithm's success in preserving the underlying data geometry. This approach directly translates to modern big data problems, where coresets are deployed to process massive datasets in machine learning, sensor networks, and real-time streaming analysis that exceed available hardware memory.
+
+**Theoretical Bounds versus Empirical Reality**  
+A critical finding of this project is the severe divergence between theoretical algorithmic bounds and empirical performance. The coreset algorithm provides a strict mathematical guarantee: the final clustering cost will fall within a $1 \pm \epsilon$ factor of the optimal solution. However, because this theorem must hold true for the absolute worst-case data distribution across any dimension, the resulting formula demands massive sample sizes for small error bounds. In practice, natural image data is highly structured. The empirical results demonstrate that executing the algorithm with drastically smaller sample sizes still achieves high accuracy, highlighting the conservative nature of worst-case theoretical computer science.
+
+**Limitations of K-Means in RGB Space**  
+The application of k-means clustering to color quantization reveals a fundamental geometric limitation. The k-means objective function strictly minimizes squared Euclidean distances, operating under the assumption that the underlying data forms distinct, spherical clusters. Natural images frequently contain smooth color gradients and continuous transitions, which map as elongated streaks or irregular shapes in a 3D RGB coordinate space. Because the algorithm forces spherical boundaries onto non-spherical data, it occasionally splits continuous gradients arbitrarily, leading to visual color banding.
+
+**NP-Hardness and Algorithmic Trade-offs**  
+Finding the mathematically optimal k-means clustering is an NP-hard problem. This algorithm bypasses that limitation by computing a constant-factor approximation to establish initial centers, followed by a probability-based data reduction. While mathematically rigorous, this approach is computationally demanding due to the required distance calculations across all data points. Deterministic spatial partitioning algorithms, such as Octree or Median Cut, perform the same color reduction in a fraction of the time by dividing the color space geometrically. The trade-off is clear: deterministic spatial splits prioritize execution speed and practical hardware efficiency, whereas the coreset methodology prioritizes strict, mathematically proven error bounds on the sum of squared distances.
