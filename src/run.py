@@ -26,7 +26,7 @@ def main():
         input_path = os.path.join(input_dir, filename)
         file_name = os.path.splitext(filename)[0]
 
-        print(f"\n\n{'='*20}")
+        print(f"\n{'='*20}")
         print(f"BATCH PROCESSING STARTING FOR: {filename}")
         print(f"{'='*20}\n")
 
@@ -39,12 +39,12 @@ def main():
             inner_sample = total_inner // k
             outer_sample = total_outer // k
 
-            print(f"\n Starting compression (k={k})")
+            print(f"Starting compression (k={k})")
             start_time = time.time()
             compress(input_path, output_path, k, epsilon, inner_sample, outer_sample)
             compress_time = time.time() - start_time
             print(f"Saved result to {output_path}")
-            print(f"Time taken: {compress_time:.2f}")
+            print(f"Time taken: {compress_time:.2f}\n")
 
 
 if __name__ == "__main__":
