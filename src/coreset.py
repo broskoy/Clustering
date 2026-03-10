@@ -1,4 +1,5 @@
 import numpy as np
+import time
 from sklearn.cluster import KMeans, MiniBatchKMeans
 
 
@@ -6,12 +7,13 @@ from sklearn.cluster import KMeans, MiniBatchKMeans
 
 def get_initial_approximation(data, k):
     # run k-means to get a constant factor approximation
+    efficient_batch_size = k * 256
     kmeans = MiniBatchKMeans(
         n_clusters=k, 
         init='k-means++', 
         n_init=1, 
         max_iter=10, 
-        batch_size=1024, 
+        batch_size=efficient_batch_size, 
         random_state=42
     )
     labels = kmeans.fit_predict(data)
@@ -100,17 +102,36 @@ def sample_outer_points(outer_points, center, outer_distances_sq, target_size):
 
 
 def build_coreset(data, k, epsilon, inner_sample_size, outer_sample_size):
+    print("      -> Starting initial approximation...")
+    start_approx = time.time()
     labels, centers = get_initial_approximation(data, k)
+    print(f"      -> Initial approximation took: {time.time() - start_approx:.2f} seconds")
     
     coreset_points = []
     coreset_weights = []
     
+    print("      -> Starting partitioning and sorting...")
+    start_loop = time.time()
+
+    # OPTIMIZATION: Sort the data once by label to group identical clusters in memory
+    sort_indices = np.argsort(labels)
+    sorted_labels = labels[sort_indices]
+    sorted_data = data[sort_indices]
+    
+    # Calculate exactly how many pixels belong to each cluster
+    cluster_sizes = np.bincount(sorted_labels, minlength=k)
+    
+    current_index = 0
+    
     for i in range(k):
-        # Extract points belonging to the current rough cluster
-        cluster_points = data[labels == i]
-        if len(cluster_points) == 0:
+        size = cluster_sizes[i]
+        if size == 0:
             continue
             
+        # Slice the sorted data array using exact memory indexes
+        cluster_points = sorted_data[current_index : current_index + size]
+        current_index += size
+        
         center = centers[i]
         
         # Partition the data
@@ -129,6 +150,8 @@ def build_coreset(data, k, epsilon, inner_sample_size, outer_sample_size):
         if len(sampled_outer) > 0:
             coreset_points.append(sampled_outer)
             coreset_weights.append(weights_outer)
+            
+    print(f"      -> Partitioning loop took: {time.time() - start_loop:.2f} seconds")
             
     # Concatenate all sampled blocks into final arrays
     final_points = np.vstack(coreset_points)
