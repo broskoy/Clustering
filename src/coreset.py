@@ -102,15 +102,15 @@ def sample_outer_points(outer_points, center, outer_distances_sq, target_size):
 
 
 def build_coreset(data, k, epsilon, inner_sample_size, outer_sample_size):
-    print("      -> Starting initial approximation...")
+    # print("      -> Starting initial approximation...")
     start_approx = time.time()
     labels, centers = get_initial_approximation(data, k)
-    print(f"      -> Initial approximation took: {time.time() - start_approx:.2f} seconds")
+    # print(f"      -> Initial approximation took: {time.time() - start_approx:.2f} seconds")
     
     coreset_points = []
     coreset_weights = []
     
-    print("      -> Starting partitioning and sorting...")
+    # print("      -> Starting partitioning and sorting...")
     start_loop = time.time()
 
     # OPTIMIZATION: Sort the data once by label to group identical clusters in memory
@@ -151,7 +151,7 @@ def build_coreset(data, k, epsilon, inner_sample_size, outer_sample_size):
             coreset_points.append(sampled_outer)
             coreset_weights.append(weights_outer)
             
-    print(f"      -> Partitioning loop took: {time.time() - start_loop:.2f} seconds")
+    # print(f"      -> Partitioning loop took: {time.time() - start_loop:.2f} seconds")
             
     # Concatenate all sampled blocks into final arrays
     final_points = np.vstack(coreset_points)

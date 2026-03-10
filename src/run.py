@@ -1,5 +1,7 @@
+import time
 import os
 from compress import compress
+
 
 def main():
     input_dir = "input"
@@ -38,8 +40,12 @@ def main():
             outer_sample = total_outer // k
 
             print(f"\n Starting compression (k={k})")
+            start_time = time.time()
             compress(input_path, output_path, k, epsilon, inner_sample, outer_sample)
+            compress_time = time.time() - start_time
             print(f"Saved result to {output_path}")
+            print(f"Time taken: {compress_time:.2f}")
+
 
 if __name__ == "__main__":
     main()
