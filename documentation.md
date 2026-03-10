@@ -51,8 +51,9 @@ Clustering/
 ├── src/                    # source code  
 │   ├── deconstruct.py      # image -> array  
 │   ├── reconstruct.py      # array + colors -> Image  
-│   ├── cluster.py          # the core mathematics  
-│   └── run.py              # run the comparisons  
+│   ├── coreset.py          # calculates the coreset  
+│   ├── compress.py         # compresses one image  
+│   └── run.py              # run all of the tests  
 │  
 ├── documentation.md        # detailed explanations here  
 ├── requirements.txt        # list of dependencies  

@@ -1,7 +1,6 @@
 import numpy as np
 import cv2
 import sys
-import os
 
 def deconstruct_image(input_image_path):
     # load the image

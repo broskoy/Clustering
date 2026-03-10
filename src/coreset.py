@@ -1,12 +1,19 @@
 import numpy as np
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans, MiniBatchKMeans
 
 
 
 
 def get_initial_approximation(data, k):
     # run k-means to get a constant factor approximation
-    kmeans = KMeans(n_clusters=k, init='k-means++', n_init=1, max_iter=10, random_state=42)
+    kmeans = MiniBatchKMeans(
+        n_clusters=k, 
+        init='k-means++', 
+        n_init=1, 
+        max_iter=10, 
+        batch_size=1024, 
+        random_state=42
+    )
     labels = kmeans.fit_predict(data)
     centers = kmeans.cluster_centers_
     return labels, centers
