@@ -102,9 +102,18 @@ A critical finding of this project is the severe divergence between theoretical 
 > do some formulas
 > despite this clustering must be done somehow (find relevat usecases)
 
-**Present Running Times**
+**Present Data**
 > start comparing the coreset method with simple k-means
 > present relevant plots
+> big sections
 
-**Improvements to our method**
+**Practical Improvements**
+> say that for theoretically sound results you need too much time
+> most cases it converges fast and with good cost
+> present the initialization with batches
+> talk about tunning constants
+> running multiple times is better than a guarantee
+
+**Aternatives**
+> Look into other methods for clustering
 
