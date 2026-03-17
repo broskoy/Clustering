@@ -7,7 +7,7 @@ from sklearn.cluster import KMeans, MiniBatchKMeans
 
 def get_initial_approximation(data, k):
     # run k-means to get a constant factor approximation
-    efficient_batch_size = k * 256
+    efficient_batch_size = k * 1024
     kmeans = MiniBatchKMeans(
         n_clusters=k, 
         init='k-means++', 

@@ -20,4 +20,3 @@ def reconstruct_image(labels, centers, height, width, channels, output_image_pat
     
     # save the image
     cv2.imwrite(output_image_path, reconstructed_image)
-    # print(f"compressed image saved to: {output_image_path}")
