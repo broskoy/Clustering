@@ -66,14 +66,6 @@ Clustering/
 
 ## Discussion points
 
-**The Image as a Diagnostic Medium**  
-While this implementation processes pixels as data points, the primary objective is not to compete with dedicated image codecs. Instead, the image serves as a multi-dimensional dataset to validate the coreset extraction algorithm visually. By mapping the abstract mathematical output of a clustering algorithm back into a 2D spatial grid, the image provides an observable proof of the algorithm's success in preserving the underlying data. This approach directly translates to modern big data problems, where coresets are deployed to process massive datasets in machine learning, sensor networks, and streaming analysis where the size would exceed available memory.
-
-**Limitations of K-Means in RGB Space**  
-The application of k-means clustering to color quantization reveals a fundamental geometric limitation. The k-means objective function strictly minimizes squared Euclidean distances, operating under the assumption that the underlying data forms distinct, spherical clusters. Natural images frequently contain smooth color gradients and continuous transitions, which map as elongated streaks or irregular shapes in a 3D RGB coordinate space. Because the algorithm forces spherical boundaries onto non-spherical data, it occasionally splits continuous gradients arbitrarily, leading to visual color banding.
-
-**NP-Hardness and Algorithmic Trade-offs**  
-Finding the mathematically optimal k-means clustering is an NP-hard problem. This algorithm bypasses that limitation by computing a constant-factor approximation to establish initial centers, followed by a probability-based data reduction. While mathematically rigorous, this approach is computationally demanding due to the required distance calculations across all data points. Deterministic spatial partitioning algorithms, such as Octree or Median Cut, perform the same color reduction in a fraction of the time by dividing the color space geometrically. The trade-off is clear: deterministic spatial splits prioritize execution speed and practical hardware efficiency, whereas the coreset methodology prioritizes strict, mathematically proven error bounds on the sum of squared distances.
 
 **Theoretical Bounds versus Empirical Reality**  
 A critical finding of this project is the severe divergence between theoretical algorithmic bounds and empirical performance. The coreset algorithm provides a strict mathematical guarantee: the final clustering cost will fall within a $1 \pm \epsilon$ factor of the optimal solution. However, because this theorem must hold true for the absolute worst-case data distribution across any dimension, the resulting formula demands massive sample sizes for small error bounds. In practice, natural image data is highly structured. The empirical results demonstrate that executing the algorithm with drastically smaller sample sizes still achieves high accuracy, highlighting the conservative nature of worst-case theoretical computer science.
@@ -84,6 +76,12 @@ A critical finding of this project is the severe divergence between theoretical 
 
 **Introduction**
 > explain what we are doing here
+
+**Problem Complexity**
+> np-hardness
+> talk about the numbers and intensiveness
+> do some formulas
+> despite this clustering must be done somehow (find relevat usecases)
 
 **Algorithm Used**
 > explain k means++
@@ -96,12 +94,6 @@ A critical finding of this project is the severe divergence between theoretical 
 > go into a bit of detail on converting the images
 > downsides of having spherical clusters in images
 
-**Problem Complexity**
-> np-hardness
-> talk about the numbers and intensiveness
-> do some formulas
-> despite this clustering must be done somehow (find relevat usecases)
-
 **Present Data**
 > start comparing the coreset method with simple k-means
 > present relevant plots
@@ -113,7 +105,4 @@ A critical finding of this project is the severe divergence between theoretical 
 > present the initialization with batches
 > talk about tunning constants
 > running multiple times is better than a guarantee
-
-**Aternatives**
-> Look into other methods for clustering
 
