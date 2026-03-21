@@ -7,7 +7,7 @@ from sklearn.cluster import KMeans
 
 
 
-def generate_centers_plot(image_path, k=32, output_path="plots/3d_centers.png"):
+def generate_centers_plot(image_path, output_path, k, name):
     print(f"Loading image from {image_path}...")
     
     img = imread(image_path)
@@ -32,7 +32,7 @@ def generate_centers_plot(image_path, k=32, output_path="plots/3d_centers.png"):
 
     print("Rendering 3D Plots...")
     fig = plt.figure(figsize=(16, 8))
-    fig.suptitle(f"3D RGB Spatial Distribution of {k} Clusters", fontsize=16, fontweight='bold')
+    fig.suptitle(f"Distribution of clusters for {name}", fontsize=16, fontweight='bold')
 
     # Helper function to format 3D axes cleanly for PDFs
     def format_3d_axes(ax, title, elev, azim):
@@ -57,13 +57,13 @@ def generate_centers_plot(image_path, k=32, output_path="plots/3d_centers.png"):
         
         ax.view_init(elev=elev, azim=azim)
 
-    # Plot 1: Front-Right Angle
+    # Plot 45
     ax1 = fig.add_subplot(121, projection='3d')
-    format_3d_axes(ax1, "Angle 1: Azimuth 45°", elev=25, azim=45)
+    format_3d_axes(ax1, "Angle: 45°", elev=25, azim=45)
 
     # Plot 2: Back-Left Angle (Rotated 90 degrees)
     ax2 = fig.add_subplot(122, projection='3d')
-    format_3d_axes(ax2, "Angle 2: Azimuth 135°", elev=25, azim=135)
+    format_3d_axes(ax2, "Angle: 135°", elev=25, azim=135)
 
     plt.tight_layout()
     
@@ -75,7 +75,7 @@ def generate_centers_plot(image_path, k=32, output_path="plots/3d_centers.png"):
 
 
 if __name__ == "__main__":
-    generate_centers_plot("input/birb.png", "plot/birb_centers.png", 16)
-    generate_centers_plot("input/cherry.png", "plot/cherry_centers.png", 16)
-    generate_centers_plot("input/forest.png", "plot/forest_centers.png", 16)
-    generate_centers_plot("input/windows.png", "plot/windows_centers.png", 16)
+    generate_centers_plot("input/birb.png", "plot/birb_centers.png", 16, "Birb")
+    generate_centers_plot("input/cherry.png", "plot/cherry_centers.png", 16, "Cherry")
+    generate_centers_plot("input/forest.png", "plot/forest_centers.png", 16, "Forest")
+    generate_centers_plot("input/windows.png", "plot/windows_centers.png", 16, "Windows")
