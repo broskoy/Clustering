@@ -113,7 +113,7 @@ def build_coreset(data, k, epsilon, inner_sample_size, outer_sample_size):
     # print("      -> Starting partitioning and sorting...")
     start_loop = time.time()
 
-    # OPTIMIZATION: Sort the data once by label to group identical clusters in memory
+    # Sort the data once by label to group identical clusters in memory
     sort_indices = np.argsort(labels)
     sorted_labels = labels[sort_indices]
     sorted_data = data[sort_indices]

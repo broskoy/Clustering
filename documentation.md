@@ -64,13 +64,6 @@ Clustering/
 
 <br><br>
 
-## Discussion points
-
-
-**Theoretical Bounds versus Empirical Reality**  
-A critical finding of this project is the severe divergence between theoretical algorithmic bounds and empirical performance. The coreset algorithm provides a strict mathematical guarantee: the final clustering cost will fall within a $1 \pm \epsilon$ factor of the optimal solution. However, because this theorem must hold true for the absolute worst-case data distribution across any dimension, the resulting formula demands massive sample sizes for small error bounds. In practice, natural image data is highly structured. The empirical results demonstrate that executing the algorithm with drastically smaller sample sizes still achieves high accuracy, highlighting the conservative nature of worst-case theoretical computer science.
-
-
 
 ## Structure of thesis
 
@@ -106,3 +99,4 @@ A critical finding of this project is the severe divergence between theoretical 
 > talk about tunning constants
 > running multiple times is better than a guarantee
 
+**Conclusion**

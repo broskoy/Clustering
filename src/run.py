@@ -4,6 +4,8 @@ import csv
 from compress import compress
 
 
+
+
 def process_single_image(input_path, file_name, output_dir, k_values, epsilon, total_inner, total_outer, iterations, csv_writer):
     print(f"\n{'='*30}")
     print(f"STARTING BATCH FOR [{file_name}.png]")
@@ -32,6 +34,8 @@ def process_single_image(input_path, file_name, output_dir, k_values, epsilon, t
                 
             except Exception as e:
                 print(f"  Iteration {i} FAILED: {e}")
+
+
 
 
 def main():
