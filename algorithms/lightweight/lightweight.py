@@ -14,14 +14,14 @@ def extract_lightweight_coreset(data, coreset_size, seed=None):
         
     N = data.shape[0]
     
-    # 1. Find the global mean of the dataset
+    # Find the global mean of the dataset
     mean = np.mean(data, axis=0)
     
-    # 2. Calculate the squared Euclidean distance of every point to the mean
+    # Calculate the squared Euclidean distance of every point to the mean
     distances_sq = np.sum((data - mean) ** 2, axis=1)
     sum_distances_sq = np.sum(distances_sq)
     
-    # 3. Calculate sampling probabilities
+    # Calculate sampling probabilities
     # The probability formula balances uniform sampling (1/2N) with 
     # importance sampling for outliers (distance to mean).
     # We add 1e-10 to prevent division by zero in perfectly uniform data.
@@ -30,11 +30,11 @@ def extract_lightweight_coreset(data, coreset_size, seed=None):
     # Ensure probabilities sum exactly to 1.0 (NumPy requirement)
     prob = prob / np.sum(prob)
     
-    # 4. Sample the coreset indices based on the calculated probabilities
+    # Sample the coreset indices based on the calculated probabilities
     coreset_indices = np.random.choice(N, size=coreset_size, replace=True, p=prob)
     coreset = data[coreset_indices]
     
-    # 5. Calculate the mathematical weights for the sampled points
+    # Calculate the mathematical weights for the sampled points
     weights = 1.0 / (coreset_size * prob[coreset_indices])
     
     return coreset, weights
