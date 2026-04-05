@@ -46,27 +46,33 @@ Clustering/
 │  
 ├── code/                   # source code  
 |   |
-│   ├── image/              # image conversion  
-│   |   ├── decode.py 
-│   |   └── encode.py 
+│   ├── data/               # handles all data conversions
+│   │   ├── image.py        # image decode (N x 3) / encode (back to PNG)
+│   │   ├── uber.py         # uber decode (N x 3) / encode (heatmap)
+│   │   └── loader.py       # the script that routes to the right file
 |   |
-│   ├── uber/               # uber conversion  
-│   |   ├── decode.py  
-│   |   └── encode.py  
-|   |  
-|   ├── loader.py           # converts inputs for processing
-│   ├── coreset.py          # calculates the coreset  
-│   ├── compress.py         # compresses one image  
+│   ├── algorithms/         # different pipelines
+│   │   ├── baseline.py     # 1: standard k-means++
+│   │   ├── theoretical.py  # 2: the strict unoptimized paper EGB
+│   │   └── practical.py    # 3: optimized EGB
+│   │
+│   ├── evaluate.py         # calculates cost and handles the math
+│   ├── visualize.py        # handles drawing the graphs and scatter plots
 │   └── run.py              # run all of the tests  
 │  
 ├── input/                  # initial datasets  
 │   ├── image/  
 │   ├── uber/  
-│   ├── blank/  
-│   └── blank/  
+│   ├── ?/  
+│   └── ?/  
 |  
-├── output/                 # the clusters and reconstructions  
-├── data/                   # the test data and plots for performance   
+├── output/                 # the data for the essay
+│   ├── centers/            # what do the centers looks like
+│   ├── compressed/         # the compressed version of the data
+│   ├── cost/               # how the cost changes with time (prformance)
+│   ├── k/                  # study the impact of k
+│   ├── epsilon/            # study the impact of epsilon
+│   └── ?/  
 │  
 ├── documentation.md        # detailed explanations here  
 ├── requirements.txt        # list of dependencies  
