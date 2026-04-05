@@ -44,59 +44,30 @@ To keep the coreset small without sacrificing reliability, the implementation wi
 
 Clustering/  
 │  
-├── originals/              # original png images  
-├── input/                  # smaller png images  
-├── output/                 # compressed images  
-├── data/                   # the test data saved in csv
-├── plots/                  # different plots for the essay  
-│  
-├── src/                    # source code  
-│   ├── deconstruct.py      # image to array  
-│   ├── reconstruct.py      # array to image  
+├── code/                   # source code  
+|   |
+│   ├── image/              # image conversion  
+│   |   ├── decode.py 
+│   |   └── encode.py 
+|   |
+│   ├── uber/               # uber conversion  
+│   |   ├── decode.py  
+│   |   └── encode.py  
+|   |  
+|   ├── loader.py           # converts inputs for processing
 │   ├── coreset.py          # calculates the coreset  
 │   ├── compress.py         # compresses one image  
 │   └── run.py              # run all of the tests  
 │  
+├── input/                  # initial datasets  
+│   ├── image/  
+│   ├── uber/  
+│   ├── blank/  
+│   └── blank/  
+|  
+├── output/                 # the clusters and reconstructions  
+├── data/                   # the test data and plots for performance   
+│  
 ├── documentation.md        # detailed explanations here  
 ├── requirements.txt        # list of dependencies  
 └── README.md               # project overview 
-
-
-<br><br>
-
-
-## Structure of thesis
-
-**Introduction**
-> explain what we are doing here
-
-**Problem Complexity**
-> np-hardness
-> talk about the numbers and intensiveness
-> do some formulas
-> despite this clustering must be done somehow (find relevat usecases)
-
-**Algorithm Used**
-> explain k means++
-> explain the paper implementation
-> talk about the process steps
-> focus o the coresets a bit
-
-**Visual Medium**
-> image compression is a useful visualization but not the goal
-> go into a bit of detail on converting the images
-> downsides of having spherical clusters in images
-
-**Present Data**
-> start comparing the coreset method with simple k-means
-> present relevant plots
-> big sections
-
-**Practical Improvements**
-> say that for theoretically sound results you need too much time
-> most cases it converges fast and with good cost
-> present the initialization with batches
-> talk about tunning constants
-> running multiple times is better than a guarantee
-
-**Conclusion**
