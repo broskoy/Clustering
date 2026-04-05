@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 import sys
 
-def deconstruct_image(input_image_path):
+def encode_image(input_image_path):
     # load the image
     image = cv2.imread(input_image_path)
     if image is None:

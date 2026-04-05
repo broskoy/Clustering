@@ -1,15 +1,15 @@
 import time
 from sklearn.cluster import KMeans
-from deconstruct import deconstruct_image
-from reconstruct import reconstruct_image
-from coreset import build_coreset
+from code.image.decode import decode_image
+from code.image.encode import encode_image
+from code.coreset import build_coreset
 
 
 def compress(input_path, output_path, k, epsilon, inner_sample, outer_sample):
 
     # print("1 Loading image data...")
     # start_time = time.time()
-    pixels, h, w, c = deconstruct_image(input_path)
+    pixels, h, w, c = decode_image(input_path)
     # deconstruct_time = time.time() - start_time
     # print(f"Original shape: {h}x{w} ({len(pixels)} pixels)")
     # print(f"Deconstruct time: {deconstruct_time:.2f} seconds")
@@ -37,7 +37,7 @@ def compress(input_path, output_path, k, epsilon, inner_sample, outer_sample):
     # print("\n5 Reconstructing image...")
     # start_time = time.time()
     centers = kmeans.cluster_centers_
-    reconstruct_image(labels, centers, h, w, c, output_path)
+    encode_image(labels, centers, h, w, c, output_path)
     # reconstruct_time = time.time() - start_time
     # print(f"Reconstruct time: {reconstruct_time:.2f} seconds")
 

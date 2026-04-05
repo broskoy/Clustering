@@ -1,7 +1,7 @@
 import time
 import os
 import csv
-from compress import compress
+from code.compress import compress
 
 
 

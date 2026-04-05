@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 import os
 
-def reconstruct_image(labels, centers, height, width, channels, output_image_path):
+def encode_image(labels, centers, height, width, channels, output_image_path):
     # map each pixel to its assigned cluster color
     reconstructed_pixels = centers[labels]
     
