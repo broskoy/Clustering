@@ -1,8 +1,8 @@
 import time
 from sklearn.cluster import KMeans
-from code.image.decode import decode_image
-from code.image.encode import encode_image
-from code.coreset import build_coreset
+from src.data.image import decode_image
+from src.data.image import encode_image
+from src.coreset import build_coreset
 
 
 def compress(input_path, output_path, k, epsilon, inner_sample, outer_sample):
