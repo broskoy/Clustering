@@ -1,3 +1,5 @@
 numpy
 opencv-python
 scikit-learn
+pandas
+matplotlib
