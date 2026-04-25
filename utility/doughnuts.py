@@ -2,7 +2,10 @@ import numpy as np
 import pandas as pd
 import os
 
-def generate_complex_synthetic(n_points, output_path):
+
+
+
+def generate_synthetic(n_points, output_path):
     """
     Generates a 4-doughnut system: 
     1. Large Fuzzy (Origin)
@@ -14,10 +17,9 @@ def generate_complex_synthetic(n_points, output_path):
     
     # Configuration: (center_x, center_y, radius_mean, radius_std, weight)
     configs = [
-        (0, 0, 15.0, 4.0, 0.4),   # Large Fuzzy (40% of points)
-        (0, 0, 5.0, 0.5, 0.2),    # Small Dense (20% of points)
-        (30, 20, 10.0, 1.5, 0.25), # Medium Satellite (25% of points)
-        (-25, 10, 3.0, 0.2, 0.15)  # Tiny Sharp Satellite (15% of points)
+        (0, 0, 10.0, 2.0, 0.65),
+        (18, 18, 5.0, 1.4, 0.25),
+        (0, 23, 3.0, 1.0, 0.10)
     ]
 
     for c_x, c_y, r_mean, r_std, weight in configs:
@@ -43,7 +45,7 @@ def generate_complex_synthetic(n_points, output_path):
 
 
 if __name__ == "__main__":
-    generate_complex_synthetic(
-        n_points=200000, 
+    generate_synthetic(
+        n_points=1000000, 
         output_path="input/synthetic/doughnuts.csv"
     )

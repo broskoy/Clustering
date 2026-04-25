@@ -23,14 +23,14 @@ def generate_plot(data, centers, metadata, output_path, title="Cluster Visualiza
 
 
 def _plot_2d(data, centers, output_path, title):
-    plt.figure(figsize=(10, 8))
+    plt.figure(figsize=(10, 10))
     
     # Original data in the background
-    plt.scatter(data[:, 0], data[:, 1], c='gray', s=1, alpha=0.1, label='Original Data')
+    plt.scatter(data[:, 0], data[:, 1], c='gray', s=1, alpha=0.01, label='Original Data')
     
     # Cluster centers in the foreground
-    plt.scatter(centers[:, 0], centers[:, 1], c='red', marker='D', s=50, 
-                edgecolors='black', label='Cluster Centers')
+    plt.scatter(centers[:, 0], centers[:, 1], c='black', marker='D', s=50, 
+                edgecolors='white', label='Cluster Centers')
     
     plt.title(title)
     plt.xlabel("Dimension 1")

@@ -63,17 +63,18 @@ def process_dataset(input_path, file_name, out_dir, k_values, epsilon, total_inn
 
 def main():
     # define the input directories to scan
-    input_dirs = ["input/image", "input/real", "input/synthetic"]
+    # input_dirs = ["input/image", "input/real", "input/synthetic"]
+    input_dirs = ["input/synthetic"]
     base_output_dir = "output"
     plot_dir = "plots/execution_times"
     
     os.makedirs(plot_dir, exist_ok=True)
 
-    k_values = [2, 4, 8, 16]
+    k_values = [2, 4, 8, 16, 32, 64]
     epsilon = 0.5
     total_inner = 4096
     total_outer = 4096
-    iterations = 10
+    iterations = 1
 
     # set up the CSV file
     csv_file_path = os.path.join(plot_dir, "execution_times.csv")
