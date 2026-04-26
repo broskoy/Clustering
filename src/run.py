@@ -49,12 +49,12 @@ def process_dataset(input_path, file_name, out_dir, k_values, epsilon, total_inn
                 # 5. Visualization Phase (Only run on iteration 0)
                 if i == 0:
                     # Always generate the mathematical plot (2D or 3D)
-                    plot_path = os.path.join(out_dir, f"{file_name}-{k}_plot.png")
-                    generate_plot(data, centers, metadata, plot_path, title=f"Dataset: {file_name} (k={k})")
+                    plot_path = os.path.join(out_dir, f"{file_name}-{k}.png")
+                    generate_plot(data, centers, metadata, plot_path, title=f"{file_name} (k={k})")
                     
                     # If it is an image, also rebuild the visual PNG
                     if metadata['type'] == 'image':
-                        image_path = os.path.join(out_dir, f"{file_name}-{k}_reconstructed.png")
+                        image_path = os.path.join(out_dir, f"{file_name}-{k}-reconstructed.png")
                         encode_image(labels, centers, metadata, image_path)
                 
             except Exception as e:
@@ -63,10 +63,9 @@ def process_dataset(input_path, file_name, out_dir, k_values, epsilon, total_inn
 
 def main():
     # define the input directories to scan
-    # input_dirs = ["input/image", "input/real", "input/synthetic"]
-    input_dirs = ["input/synthetic"]
+    input_dirs = ["input/image", "input/real", "input/synthetic"]
     base_output_dir = "output"
-    plot_dir = "plots/execution_times"
+    plot_dir = "plot"
     
     os.makedirs(plot_dir, exist_ok=True)
 

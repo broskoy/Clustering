@@ -4,12 +4,9 @@ import matplotlib.pyplot as plt
 
 
 
-
+# routing function for visualizations
 def generate_plot(data, centers, metadata, output_path, title="Cluster Visualization"):
-    """
-    Master routing function for visualizations.
-    Reads the dataset dimensions and routes to the correct chart type.
-    """
+
     dims = metadata.get('dims', data.shape[1])
     
     if dims == 2:
@@ -26,15 +23,15 @@ def _plot_2d(data, centers, output_path, title):
     plt.figure(figsize=(10, 10))
     
     # Original data in the background
-    plt.scatter(data[:, 0], data[:, 1], c='gray', s=1, alpha=0.01, label='Original Data')
+    plt.scatter(data[:, 0], data[:, 1], c='gray', s=1, alpha=0.01)
     
     # Cluster centers in the foreground
     plt.scatter(centers[:, 0], centers[:, 1], c='black', marker='D', s=50, 
-                edgecolors='white', label='Cluster Centers')
+                edgecolors='white')
     
     plt.title(title)
-    plt.xlabel("Dimension 1")
-    plt.ylabel("Dimension 2")
+    # plt.xlabel("Dimension 1")
+    # plt.ylabel("Dimension 2")
     plt.legend()
     plt.grid(True, linestyle='--', alpha=0.6)
     
