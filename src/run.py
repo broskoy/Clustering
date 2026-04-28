@@ -8,7 +8,6 @@ from src.loader import load_dataset, encode_image
 from src.coreset import build_coreset
 from src.visualize import generate_plot 
 
-
 def process_dataset(input_path, file_name, out_dir, k_values, epsilon, total_inner, total_outer, iterations, csv_writer):
     print(f"\n{'='*30}")
     print(f"STARTING BATCH FOR [{file_name}]")
@@ -42,9 +41,9 @@ def process_dataset(input_path, file_name, out_dir, k_values, epsilon, total_inn
                 
                 exec_time = time.time() - start_time
                 
-                # Write the row directly to the CSV
-                csv_writer.writerow([file_name, metadata['type'], k, i, round(exec_time, 4)])
-                print(f"  Iteration {i}: {exec_time:.2f} seconds")
+                # Write the row directly to the CSV (Added Epsilon and Cost_Inertia)
+                csv_writer.writerow([file_name, metadata['type'], k, epsilon, i, round(exec_time, 4), kmeans.inertia_])
+                print(f"  Iteration {i}: {exec_time:.2f} seconds | Cost: {kmeans.inertia_:.2f}")
                 
                 # 5. Visualization Phase (Only run on iteration 0)
                 if i == 0:
@@ -60,14 +59,13 @@ def process_dataset(input_path, file_name, out_dir, k_values, epsilon, total_inn
             except Exception as e:
                 print(f"  Iteration {i} FAILED: {e}")
 
-
 def main():
     # define the input directories to scan
-    input_dirs = ["input/image", "input/real", "input/synthetic"]
+    input_dirs = ["input/image", "input/real","input/synthetic"]
     base_output_dir = "output"
-    plot_dir = "plot"
+    metric_dir = "metrics"
     
-    os.makedirs(plot_dir, exist_ok=True)
+    os.makedirs(metric_dir, exist_ok=True)
 
     k_values = [2, 4, 8, 16, 32, 64]
     epsilon = 0.5
@@ -76,18 +74,19 @@ def main():
     iterations = 1
 
     # set up the CSV file
-    csv_file_path = os.path.join(plot_dir, "execution_times.csv")
+    csv_file_path = os.path.join(metric_dir, "metrics.csv")
     
     with open(csv_file_path, mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(["Dataset_Name", "Dataset_Type", "K_Value", "Iteration", "Execution_Time"])
+        # Added Epsilon and Cost_Inertia headers
+        writer.writerow(["Dataset_Name", "Dataset_Type", "K_Value", "Epsilon", "Iteration", "Execution_Time", "Cost_Inertia"])
 
         # iterate through every input directory
         for folder in input_dirs:
             if not os.path.exists(folder):
                 continue
                 
-            # Create a matching output sub-folder (e.g., output/image, output/synthetic)
+            # Create a matching output sub-folder
             folder_type = os.path.basename(folder)
             out_dir = os.path.join(base_output_dir, folder_type)
             os.makedirs(out_dir, exist_ok=True)

@@ -47,5 +47,5 @@ def generate_synthetic(n_points, output_path):
 if __name__ == "__main__":
     generate_synthetic(
         n_points=1000000, 
-        output_path="input/synthetic/doughnuts.csv"
+        output_path="input/synthetic/donuts.csv"
     )
