@@ -61,7 +61,8 @@ def process_dataset(input_path, file_name, out_dir, k_values, epsilon, total_inn
 
 def main():
     # define the input directories to scan
-    input_dirs = ["input/image", "input/real","input/synthetic"]
+    # input_dirs = ["input/image", "input/real","input/synthetic"]
+    input_dirs = ["input/real"]
     base_output_dir = "output"
     metric_dir = "metrics"
     

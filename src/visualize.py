@@ -1,6 +1,8 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+
 
 
 
@@ -13,6 +15,8 @@ def generate_plot(data, centers, metadata, output_path, title="Cluster Visualiza
         _plot_2d(data, centers, output_path, title)
     elif dims == 3:
         _plot_3d_rgb(data, centers, output_path, title)
+    elif dims == 6:
+        _plot_6d(data, centers, output_path, title, dims)
     else:
         print(f"Visualization skipped: No plotting logic for {dims}D data.")
 
@@ -89,3 +93,62 @@ def _plot_3d_rgb(data, centers, output_path, title):
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
     plt.close(fig) # Prevent memory leaks during loops
     print(f"3D RGB Plot saved to {output_path}")
+
+
+
+
+def _plot_6d(data, centers, output_path, title, dims):
+    fig = plt.figure(figsize=(16, 8))
+    fig.suptitle(title, fontsize=16, fontweight='bold')
+
+    # --- LEFT: PCA Scatter Plot (Macro View) ---
+    ax1 = fig.add_subplot(121)
+    
+    # Downsample background data to keep plotting fast and prevent memory crashes
+    np.random.seed(42)
+    sample_size = min(50000, data.shape[0])
+    bg_points = data[np.random.choice(data.shape[0], sample_size, replace=False)]
+    
+    # Calculate PCA to project N-dimensions down to 2-dimensions
+    pca = PCA(n_components=2)
+    data_2d = pca.fit_transform(bg_points)
+    centers_2d = pca.transform(centers)
+    
+    ax1.scatter(data_2d[:, 0], data_2d[:, 1], c='gray', s=5, alpha=0.1, label='Data (PCA)')
+    ax1.scatter(centers_2d[:, 0], centers_2d[:, 1], c='red', marker='D', s=50, edgecolors='black', label='Centers (PCA)')
+    
+    ax1.set_title("Macro View: 2D PCA Projection")
+    ax1.set_xlabel("Principal Component 1")
+    ax1.set_ylabel("Principal Component 2")
+    ax1.legend()
+    ax1.grid(True, linestyle='--', alpha=0.6)
+
+    # --- RIGHT: Radar Chart (Micro View) ---
+    ax2 = fig.add_subplot(122, polar=True)
+    
+    # Compute angles for each dimension spoke
+    angles = np.linspace(0, 2 * np.pi, dims, endpoint=False).tolist()
+    angles += angles[:1] # Close the circle
+    
+    # Use original labels
+    labels = ["Danceability", "Valence", "Energy", "Acousticness", "Instrumentalness", "Speechiness"]
+    ax2.set_xticks(angles[:-1])
+    ax2.set_xticklabels(labels)
+    
+    # Plot each cluster center
+    for center in centers:
+        values = center.tolist()
+        values += values[:1] # Close the circle
+        ax2.plot(angles, values, linewidth=1.5, alpha=0.8)
+        
+        # Only fill the polygons if K is small to prevent visual clutter
+        if len(centers) <= 8:
+            ax2.fill(angles, values, alpha=0.1)
+
+    ax2.set_title("Micro View: Cluster Center Features")
+    
+    plt.tight_layout()
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    plt.savefig(output_path, dpi=300, bbox_inches='tight')
+    plt.close(fig)
+    print(f"N-D Plot saved to {output_path}")

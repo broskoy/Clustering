@@ -4,18 +4,11 @@ import os
 
 
 
-
+# creates a synthetic dataset with three fuzzy donuts
 def generate_synthetic(n_points, output_path):
-    """
-    Generates a 4-doughnut system: 
-    1. Large Fuzzy (Origin)
-    2. Small Dense (Origin)
-    3. Medium Balanced (Satellite)
-    4. Tiny Sharp (Satellite)
-    """
     all_data = []
     
-    # Configuration: (center_x, center_y, radius_mean, radius_std, weight)
+    # center_x, center_y, radius_mean, radius_std, weight
     configs = [
         (0, 0, 10.0, 2.0, 0.65),
         (18, 18, 5.0, 1.4, 0.25),
