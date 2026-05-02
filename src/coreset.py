@@ -23,7 +23,7 @@ def get_initial_approximation(data, k):
 
 
 
-def calculate_cluster_radius(cluster_points, center, epsilon):
+def calculate_epsilon_radius(cluster_points, center, epsilon):
     # calculate the cost for all points in this cluster
     distances_sq = np.sum((cluster_points - center) ** 2, axis=1)
     cost = np.sum(distances_sq)
