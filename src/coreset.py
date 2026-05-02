@@ -5,17 +5,18 @@ from sklearn.cluster import KMeans, MiniBatchKMeans
 
 
 
-def get_initial_approximation(data, k):
+def get_initial_approximation(data, k, batch_size):
     # run k-means to get a constant factor approximation
-    efficient_batch_size = k * 1024
+
     kmeans = MiniBatchKMeans(
         n_clusters=k, 
         init='k-means++', 
         n_init=1, 
         max_iter=10, 
-        batch_size=efficient_batch_size, 
+        batch_size=batch_size, 
         random_state=42
     )
+
     labels = kmeans.fit_predict(data)
     centers = kmeans.cluster_centers_
     return labels, centers
@@ -30,6 +31,21 @@ def calculate_epsilon_radius(cluster_points, center, epsilon):
     
     # calculate the boundary radius (small constant added to prevent division by zero)
     radius = np.sqrt(cost / (epsilon * len(cluster_points) + 1e-9))
+    return radius, distances_sq
+
+
+
+
+def calculate_mean_radius(cluster_points, center):
+    # calculate the squared distance for all points in this cluster
+    distances_sq = np.sum((cluster_points - center) ** 2, axis=1)
+    
+    # take the mean of those distances
+    mean_dist_sq = np.mean(distances_sq)
+    
+    # do the normalized radius 
+    radius = np.sqrt(mean_dist_sq)
+    
     return radius, distances_sq
 
 
@@ -101,10 +117,10 @@ def sample_outer_points(outer_points, center, outer_distances_sq, target_size):
 
 
 
-def build_coreset(data, k, epsilon, inner_sample_size, outer_sample_size):
+def build_coreset(data, k, inner_sample_size, outer_sample_size, dynamic_batch_size):
     # print("      -> Starting initial approximation...")
     start_approx = time.time()
-    labels, centers = get_initial_approximation(data, k)
+    labels, centers = get_initial_approximation(data, k, dynamic_batch_size)
     # print(f"      -> Initial approximation took: {time.time() - start_approx:.2f} seconds")
     
     coreset_points = []
@@ -135,7 +151,7 @@ def build_coreset(data, k, epsilon, inner_sample_size, outer_sample_size):
         center = centers[i]
         
         # Partition the data
-        radius, distances_sq = calculate_cluster_radius(cluster_points, center, epsilon)
+        radius, distances_sq = calculate_mean_radius(cluster_points, center)
         inner_pts, outer_pts, outer_dist_sq = partition_cluster(cluster_points, distances_sq, radius)
         
         # Sample the partitions
