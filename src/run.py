@@ -11,19 +11,20 @@ from src.visualize import generate_plot
 # ================================
 # 1 CONFIGURATION CONSTANTS
 # ================================
+
 #Folders
 input_folder = "input"
 output_folder = "output"
 metric_folder = "metrics"
 
 # Execution Parameters
-iterations = 5
+iterations = 1
 k_values = [2, 4, 8, 16, 32, 64]
-q_budgets = [4096]
+q_budgets = [8192]
 
 # Feature Toggles
 enable_logging = False
-enable_plotting = False 
+enable_output = True 
 
 
 
@@ -31,6 +32,7 @@ enable_plotting = False
 # ================================
 # 2 EXPERIMENT RUNNERS
 # ================================
+
 def run_coreset_experiment(data, k, inner_sample, outer_sample, batch_size):
     """Executes a single coreset extraction and clustering run"""
     start_time = time.time()
@@ -87,6 +89,7 @@ def run_random_baseline(data, k, q_budget):
 # ================================
 # 3 METRICS REPORTING
 # ================================
+
 def log_metrics(writer, file_name, metadata, k, q, iteration, base_cost, coreset_res, rand_cost, rand_time):
     """Handles all CSV writing logic"""
     writer.writerow([
@@ -155,7 +158,7 @@ def process_dataset(input_path, output_path, file_name, csv_writer):
                     print(f"    Iter {i}: Coreset Ratio: {coreset_results['cost_p'] / cost_p_c:.3f} | Random Ratio: {rand_cost / cost_p_c:.3f}")
                     
                     # generate visuals
-                    if enable_plotting and i == 0:
+                    if enable_output and i == 0:
                         plot_path = os.path.join(output_path, f"{file_name}-k{k}-q{q}.png")
                         generate_plot(data, coreset_results['centers'], metadata, plot_path, title=f"{file_name} (k={k}, |Q|={q})")
                         
@@ -173,6 +176,7 @@ def process_dataset(input_path, output_path, file_name, csv_writer):
 # ================================
 # 4 MAIN EXECUTION
 # ================================
+
 def main():
     # create metrics csv
     csv_file_path = os.path.join(metric_folder, "metrics.csv")

@@ -44,35 +44,31 @@ To keep the coreset small without sacrificing reliability, the implementation wi
 
 Clustering/  
 │  
-├── code/                   # source code  
+├── src/                    # source code  
 |   |
-│   ├── data/               # handles all data conversions
-│   │   ├── image.py        # image decode (N x 3) / encode (back to PNG)
-│   │   ├── uber.py         # uber decode (N x 3) / encode (heatmap)
-│   │   └── loader.py       # the script that routes to the right file
-|   |
-│   ├── algorithms/         # different pipelines
-│   │   ├── baseline.py     # 1: standard k-means++
-│   │   ├── theoretical.py  # 2: the strict unoptimized paper EGB
-│   │   └── practical.py    # 3: optimized EGB
-│   │
-│   ├── evaluate.py         # calculates cost and handles the math
+│   ├── coreset.py          # finds a good coreset
+│   ├── loader.py           # converting datasets to raw points and metadata
 │   ├── visualize.py        # handles drawing the graphs and scatter plots
 │   └── run.py              # run all of the tests  
 │  
 ├── input/                  # initial datasets  
-│   ├── image/  
-│   ├── uber/  
-│   ├── ?/  
-│   └── ?/  
+│   ├── uber  
+│   ├── birb  
+│   ├── spotify
+│   └── donuts
 |  
-├── output/                 # the data for the essay
-│   ├── centers/            # what do the centers looks like
-│   ├── compressed/         # the compressed version of the data
-│   ├── cost/               # how the cost changes with time (prformance)
-│   ├── k/                  # study the impact of k
-│   ├── epsilon/            # study the impact of epsilon
-│   └── ?/  
+├── output/                 # solution centers visualized  
+│   ├── uber/  
+│   ├── birb/  
+│   ├── spotify/
+│   └── donuts/
+|
+├── metrics/                # here are measurements of performance
+│   ├── metrics.csv         # this holds the data for many runs
+│   ├── k vs q              # reveals the scaling to harder problems
+│   └── q vs epsilon        # compares the importance of epsilon with coreset size
+|
+├── utility/                # this is used for cleaning / creating data
 │  
 ├── documentation.md        # detailed explanations here  
 ├── requirements.txt        # list of dependencies  
