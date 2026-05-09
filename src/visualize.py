@@ -34,9 +34,6 @@ def _plot_2d(data, centers, output_path, title):
                 edgecolors='white')
     
     plt.title(title)
-    # plt.xlabel("Dimension 1")
-    # plt.ylabel("Dimension 2")
-    plt.legend()
     plt.grid(True, linestyle='--', alpha=0.6)
     
     os.makedirs(os.path.dirname(output_path), exist_ok=True)

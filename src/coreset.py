@@ -165,8 +165,8 @@ def build_coreset(data, k, q):
         inner_pts, outer_pts, outer_dist_sq = partition_cluster(cluster_points, distances_sq, radius)
         
         # Sample the partitions
-        sampled_inner, weights_inner = sample_inner_points(inner_pts, inner_sample_size)
-        sampled_outer, weights_outer = sample_outer_points(outer_pts, center, outer_dist_sq, outer_sample_size)
+        sampled_inner, weights_inner = sample_inner_points(inner_pts, inner_sample)
+        sampled_outer, weights_outer = sample_outer_points(outer_pts, center, outer_dist_sq, outer_sample)
         
         # Store results
         if len(sampled_inner) > 0:

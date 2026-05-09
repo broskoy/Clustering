@@ -14,12 +14,12 @@ from src.visualize import generate_plot
 
 
 # Execution Parameters
-iterations = 10
+iterations = 4
 k_values = [2, 4, 8, 16, 32, 64]
 q_budgets = [64, 128, 256, 512, 1024, 4096]
 
 # Feature Toggles
-enable_metrics = True
+enable_metrics = False
 enable_output = True 
 
 
@@ -197,7 +197,7 @@ def main():
         os.makedirs(file_output, exist_ok=True)
         
         if enable_metrics:
-                dataset_metrics(file_path, file_output, file_name, writer)
+            dataset_metrics(file_path, file_output, file_name, writer)
                 
         if enable_output:
             dataset_output(file_path, file_output, file_name)
