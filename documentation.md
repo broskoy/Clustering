@@ -46,29 +46,18 @@ Clustering/
 │  
 ├── src/                    # source code  
 |   |
+│   ├── utility/            # this is used for cleaning / creating data
+│   ├── plotting/           # this containg all of the metrics plotting
 │   ├── coreset.py          # finds a good coreset
 │   ├── loader.py           # converting datasets to raw points and metadata
 │   ├── visualize.py        # handles drawing the graphs and scatter plots
 │   └── run.py              # run all of the tests  
 │  
 ├── input/                  # initial datasets  
-│   ├── uber  
-│   ├── birb  
-│   ├── spotify
-│   └── donuts
 |  
 ├── output/                 # solution centers visualized  
-│   ├── uber/  
-│   ├── birb/  
-│   ├── spotify/
-│   └── donuts/
 |
 ├── metrics/                # here are measurements of performance
-│   ├── metrics.csv         # this holds the data for many runs
-│   ├── k vs q              # reveals the scaling to harder problems
-│   └── q vs epsilon        # compares the importance of epsilon with coreset size
-|
-├── utility/                # this is used for cleaning / creating data
 │  
 ├── documentation.md        # detailed explanations here  
 ├── requirements.txt        # list of dependencies  
