@@ -117,9 +117,19 @@ def sample_outer_points(outer_points, center, outer_distances_sq, target_size):
 
 
 
-def build_coreset(data, k, inner_sample_size, outer_sample_size, dynamic_batch_size):
+def build_coreset(data, k, q):
     # print("      -> Starting initial approximation...")
     start_approx = time.time()
+
+    # tune the inner/outer split here
+    inner_sample = max(1, (q // 2) // k)
+    outer_sample = max(1, (q // 2) // k)
+    
+    # dynamic batch size
+    target_batch = k * 1024
+    max_safe_batch = max(1024, len(data) // 10) 
+    dynamic_batch_size = min(target_batch, max_safe_batch)
+
     labels, centers = get_initial_approximation(data, k, dynamic_batch_size)
     # print(f"      -> Initial approximation took: {time.time() - start_approx:.2f} seconds")
     
