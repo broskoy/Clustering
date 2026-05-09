@@ -96,7 +96,8 @@ def run_uniform_coreset(data, k, q):
 # ================================
 
 
-def process_dataset(input_path, output_path, file_name, writer):
+# will record the performance of each algorithm in metrics
+def dataset_metrics(input_path, output_path, file_name, writer):
     """Handles all of the work for one dataset"""
 
     print(f"\n{'='*30}\nSTARTING BATCH FOR [{file_name}]\n{'='*30}")
@@ -105,8 +106,6 @@ def process_dataset(input_path, output_path, file_name, writer):
     print(f"Data shape: {data.shape}, Type: {metadata['type']}")
 
     for k in k_values:
-        
-        cost_loyd, time_loyd = run_standard_loyd(data, k)
 
         for q in q_budgets:
 
@@ -114,10 +113,11 @@ def process_dataset(input_path, output_path, file_name, writer):
             
             for i in range(iterations):
                 try:
+                    #run the loyd version
+                    cost_loyd, time_loyd = run_standard_loyd(data, k)
+
                     # run the biased coreset version
-                    cost_biased, time_biased = run_biased_coreset(
-                        data, k, inner_sample, outer_sample, dynamic_batch_size
-                    )
+                    cost_biased, time_biased = run_biased_coreset(data, k, q)
                     
                     # run the uniform coreset version
                     cost_uniform, time_uniform = run_uniform_coreset(data, k, q)
@@ -143,46 +143,67 @@ def process_dataset(input_path, output_path, file_name, writer):
                     print(f"    Iter {i} FAILED: {e}")
 
 
-# def output():
-#     # generate visuals
-#     if enable_output and i == 0:
-        #     plot_path = os.path.join(output_path, f"{file_name}-k{k}-q{q}.png")
-        #     generate_plot(data, coreset_results['centers'], metadata, plot_path, title=f"{file_name} (k={k}, |Q|={q})")
-            
-        #     if metadata['type'] == 'image':
-        #         image_path = os.path.join(output_path, f"{file_name}-k{k}-q{q}-reconstructed.png")
-        #         encode_image(coreset_results['labels'], coreset_results['centers'], metadata, image_path)
+
+
+# will generate visualizations of the clusters in output
+def dataset_output(file_path, file_output, file_name):
+    data, metadata = load_dataset(file_path)
+
+    q = 4096
+
+    for k in k_values:
+        coreset_points, coreset_weights = build_coreset(data, k, q)
+    
+        kmeans = KMeans(n_clusters=k, init='k-means++', n_init=1, max_iter=300, random_state=42)
+        kmeans.fit(coreset_points, sample_weight=coreset_weights)
+        
+        labels = kmeans.predict(data)
+        centers = kmeans.cluster_centers_
+
+        plot_path = os.path.join(file_output, f"{file_name}-k{k}-q{q}.png")
+        generate_plot(data, centers, metadata, plot_path, title=f"{file_name} (k={k}, |Q|={q})")
+        
+        if metadata['type'] == 'image':
+            image_path = os.path.join(file_output, f"{file_name}-k{k}-q{q}-reconstructed.png")
+            encode_image(labels, centers, metadata, image_path)
+
+
 
 
 def main():
-    # create metrics csv
-    csv_file_path = os.path.join("metrics", "metrics.csv")
-    
-    #open CSV safely
-    with open(csv_file_path, mode='w', newline='') as file:
 
-        # create the columns of the metrics 
-        writer = csv.writer(file)
+    metrics_file = None
+    writer = None
+
+    if (enable_metrics):
+        metrics_file = open("metrics/metrics.csv", mode='w', newline='')
+        writer = csv.writer(metrics_file)
+        writer.writerow([
+            "Dataset_Name", "Dataset_Type", 
+            "K_Clusters", "Q_Budget", "Iteration", 
+            "Cost_Loyd", "Time_Loyd", 
+            "Cost_Biased", "Time_Biased", 
+            "Cost_Uniform", "Time_Uniform"
+        ])
+
+    # iterate through input datasets
+    for filename in os.listdir("input"):
+        # get the path and name
+        file_path = os.path.join("input", filename)
+        file_name = os.path.splitext(filename)[0]
+
+        # create the specificc output folder
+        file_output = os.path.join("output", file_name)
+        os.makedirs(file_output, exist_ok=True)
+        
         if enable_metrics:
-            writer.writerow([
-                "Dataset_Name", "Dataset_Type", 
-                "K_Clusters", "Q_Budget", "Iteration", 
-                "Cost_Loyd", "Time_Loyd", 
-                "Cost_Biased", "Time_Biased", 
-                "Cost_Uniform", "Time_Uniform"
-            ])
+                dataset_metrics(file_path, file_output, file_name, writer)
+                
+        if enable_output:
+            dataset_output(file_path, file_output, file_name)
 
-        # iterate through input datasets
-        for filename in os.listdir("input"):
-            # get the path and name
-            input_path = os.path.join("input", filename)
-            file_name = os.path.splitext(filename)[0]
-
-            # create the specificc output folder
-            specific_output_folder = os.path.join("output", file_name)
-            os.makedirs(specific_output_folder, exist_ok=True)
-            
-            process_dataset(input_path, specific_output_folder, file_name, writer)
+    if metrics_file is not None:
+        metrics_file.close()
 
 
 
