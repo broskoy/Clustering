@@ -95,10 +95,11 @@ def _plot_3d_rgb(data, centers, output_path, title):
 
 
 def _plot_6d(data, centers, output_path, title, dims):
+
     fig = plt.figure(figsize=(16, 8))
     fig.suptitle(title, fontsize=16, fontweight='bold')
 
-    # --- LEFT: PCA Scatter Plot (Macro View) ---
+    # --- PCA Scatter Plot ---
     ax1 = fig.add_subplot(121)
     
     # Downsample background data to keep plotting fast and prevent memory crashes
@@ -111,16 +112,16 @@ def _plot_6d(data, centers, output_path, title, dims):
     data_2d = pca.fit_transform(bg_points)
     centers_2d = pca.transform(centers)
     
-    ax1.scatter(data_2d[:, 0], data_2d[:, 1], c='gray', s=5, alpha=0.1, label='Data (PCA)')
-    ax1.scatter(centers_2d[:, 0], centers_2d[:, 1], c='red', marker='D', s=50, edgecolors='black', label='Centers (PCA)')
+    ax1.scatter(data_2d[:, 0], data_2d[:, 1], c='gray', s=5, alpha=0.1)
+    ax1.scatter(centers_2d[:, 0], centers_2d[:, 1], c='red', marker='D', s=50, edgecolors='black')
     
-    ax1.set_title("Macro View: 2D PCA Projection")
+    ax1.set_title("2D PCA Projection With Centers")
     ax1.set_xlabel("Principal Component 1")
     ax1.set_ylabel("Principal Component 2")
-    ax1.legend()
     ax1.grid(True, linestyle='--', alpha=0.6)
 
-    # --- RIGHT: Radar Chart (Micro View) ---
+
+    # --- Radar Chart ---
     ax2 = fig.add_subplot(122, polar=True)
     
     # Compute angles for each dimension spoke

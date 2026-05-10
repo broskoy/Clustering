@@ -38,7 +38,7 @@ def plot_single_heatmap(grouped, data_col, title, filename, cmap):
         plt.ylabel('Coreset Size |Q|')
         plt.title(title)
         
-        out_file = os.path.join("metrics", filename)
+        out_file = os.path.join("metrics/time", filename)
         plt.savefig(out_file, dpi=300, bbox_inches='tight')
         plt.close()
         print(f"Saved: {out_file}")
@@ -75,7 +75,7 @@ def generate_time_plots():
     plt.grid(True, linestyle='--', alpha=0.6)
     plt.legend()
     
-    out_file_line = os.path.join("metrics", 'line_time_vs_k.png')
+    out_file_line = os.path.join("metrics/time", 'line_time_vs_k.png')
     plt.savefig(out_file_line, dpi=300, bbox_inches='tight')
     plt.close()
     print(f"Saved: {out_file_line}")

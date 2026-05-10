@@ -14,13 +14,13 @@ from src.visualize import generate_plot
 
 
 # Execution Parameters
-iterations = 4
+iterations = 2
 k_values = [2, 4, 8, 16, 32, 64]
 q_budgets = [64, 128, 256, 512, 1024, 4096]
 
 # Feature Toggles
-enable_metrics = False
-enable_output = True 
+enable_metrics = True
+enable_output = False 
 
 
 

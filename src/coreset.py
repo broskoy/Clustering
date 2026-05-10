@@ -1,28 +1,26 @@
 import numpy as np
-import time
-from sklearn.cluster import KMeans, MiniBatchKMeans
+from sklearn.cluster import kmeans_plusplus
+from sklearn.metrics import pairwise_distances_argmin
 
 
 
 
-def get_initial_approximation(data, k, batch_size):
-    # run k-means to get a constant factor approximation
-
-    kmeans = MiniBatchKMeans(
-        n_clusters=k, 
-        init='k-means++', 
-        n_init=1, 
-        max_iter=10, 
-        batch_size=batch_size, 
-        random_state=42
-    )
-
-    labels = kmeans.fit_predict(data)
-    centers = kmeans.cluster_centers_
+def get_initial_approximation(data, k, q):
+    # Grab a small subset to make initialization lightning fast.
+    # We floor the subset at 1024 to prevent math errors on very small Q budgets.
+    subset_size = min(len(data), max(1024, q))
+    indices = np.random.choice(len(data), size=subset_size, replace=False)
+    subset = data[indices]
+    
+    centers, _ = kmeans_plusplus(subset, n_clusters=k, random_state=42)
+    
+    # the nearest center for all data points
+    labels = pairwise_distances_argmin(data, centers)
+    
     return labels, centers
 
 
-
+import time
 
 def calculate_epsilon_radius(cluster_points, center, epsilon):
     # calculate the cost for all points in this cluster
@@ -88,7 +86,7 @@ def sample_inner_points(inner_points, target_size):
 
 
 
-def sample_outer_points(outer_points, center, outer_distances_sq, target_size):
+def sample_outer_points(outer_points, outer_distances_sq, target_size):
     number_outer = len(outer_points)
     
     if number_outer == 0:
@@ -118,33 +116,18 @@ def sample_outer_points(outer_points, center, outer_distances_sq, target_size):
 
 
 def build_coreset(data, k, q):
-    # print("      -> Starting initial approximation...")
-    start_approx = time.time()
 
-    # tune the inner/outer split here
-    inner_sample = max(1, (q // 2) // k)
-    outer_sample = max(1, (q // 2) // k)
-    
-    # dynamic batch size
-    target_batch = k * 1024
-    max_safe_batch = max(1024, len(data) // 10) 
-    dynamic_batch_size = min(target_batch, max_safe_batch)
-
-    labels, centers = get_initial_approximation(data, k, dynamic_batch_size)
-    # print(f"      -> Initial approximation took: {time.time() - start_approx:.2f} seconds")
+    labels, centers = get_initial_approximation(data, k, q)
     
     coreset_points = []
     coreset_weights = []
-    
-    # print("      -> Starting partitioning and sorting...")
-    start_loop = time.time()
 
     # Sort the data once by label to group identical clusters in memory
     sort_indices = np.argsort(labels)
     sorted_labels = labels[sort_indices]
     sorted_data = data[sort_indices]
     
-    # Calculate exactly how many pixels belong to each cluster
+    # Calculate exactly how many points belong to each cluster
     cluster_sizes = np.bincount(sorted_labels, minlength=k)
     
     current_index = 0
@@ -164,9 +147,15 @@ def build_coreset(data, k, q):
         radius, distances_sq = calculate_mean_radius(cluster_points, center)
         inner_pts, outer_pts, outer_dist_sq = partition_cluster(cluster_points, distances_sq, radius)
         
+        # calculate an optimal split
+        budget_per_cluster = q // k
+        inner_ratio = len(inner_pts) / size
+        inner_sample = max(1, int(budget_per_cluster * inner_ratio))
+        outer_sample = max(1, budget_per_cluster - inner_sample)
+
         # Sample the partitions
         sampled_inner, weights_inner = sample_inner_points(inner_pts, inner_sample)
-        sampled_outer, weights_outer = sample_outer_points(outer_pts, center, outer_dist_sq, outer_sample)
+        sampled_outer, weights_outer = sample_outer_points(outer_pts, outer_dist_sq, outer_sample)
         
         # Store results
         if len(sampled_inner) > 0:
@@ -176,9 +165,7 @@ def build_coreset(data, k, q):
         if len(sampled_outer) > 0:
             coreset_points.append(sampled_outer)
             coreset_weights.append(weights_outer)
-            
-    # print(f"      -> Partitioning loop took: {time.time() - start_loop:.2f} seconds")
-            
+                
     # Concatenate all sampled blocks into final arrays
     final_points = np.vstack(coreset_points)
     final_weights = np.concatenate(coreset_weights)
