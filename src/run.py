@@ -19,8 +19,8 @@ k_values = [2, 4, 8, 16, 32, 64]
 q_budgets = [64, 128, 256, 512, 1024, 4096]
 
 # Feature Toggles
-enable_metrics = True
-enable_output = False 
+enable_metrics = False
+enable_output = True
 
 
 
@@ -98,7 +98,6 @@ def run_uniform_coreset(data, k, q):
 
 # will record the performance of each algorithm in metrics
 def dataset_metrics(input_path, output_path, file_name, writer):
-    """Handles all of the work for one dataset"""
 
     print(f"\n{'='*30}\nSTARTING BATCH FOR [{file_name}]\n{'='*30}")
 
