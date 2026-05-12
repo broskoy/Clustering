@@ -37,28 +37,3 @@ Because ϵ is raised to the 5th power in the denominator, choosing a highly stri
 The confidence parameter δ defines the acceptable probability that the randomized non-uniform sampling fails to produce a valid coreset. A lower δ (higher required confidence) mathematically forces a larger sample size.
 
 To keep the coreset small without sacrificing reliability, the implementation will utilize probability amplification. The parameter δ will be set to a relatively high value (e.g., δ=0.5, which represents a 50% theoretical failure rate). Because clustering on the resulting tiny coreset is computationally inexpensive, the algorithm will generate multiple independent coresets and run k-means on each. If 5 iterations are run, the probability that all 5 fail drops to 0.55, yielding an actual success probability of 96.875%. The iteration that produces the lowest final clustering cost will be selected as the final compressed output.
-
-<br><br>
-
-## Python Implementation
-
-Clustering/  
-│  
-├── src/                    # source code  
-|   |
-│   ├── utility/            # this is used for cleaning / creating data
-│   ├── plotting/           # this containg all of the metrics plotting
-│   ├── coreset.py          # finds a good coreset
-│   ├── loader.py           # converting datasets to raw points and metadata
-│   ├── visualize.py        # handles drawing the graphs and scatter plots
-│   └── run.py              # run all of the tests  
-│  
-├── input/                  # initial datasets  
-|  
-├── output/                 # solution centers visualized  
-|
-├── metrics/                # here are measurements of performance
-│  
-├── documentation.md        # detailed explanations here  
-├── requirements.txt        # list of dependencies  
-└── README.md               # project overview 

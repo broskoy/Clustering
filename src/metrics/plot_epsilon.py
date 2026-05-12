@@ -45,7 +45,7 @@ def generate_heatmap_q_vs_epsilon(csv_path, output_dir):
     plt.title('Empirical Cost Ratio: |Q| vs. Epsilon')
     
     os.makedirs(output_dir, exist_ok=True)
-    out_file = os.path.join(output_dir, "heatmap_q_vs_epsilon.png")
+    out_file = os.path.join(output_dir, "heatmap_epsilon.png")
     plt.savefig(out_file, dpi=300, bbox_inches='tight')
     plt.close()
     print(f"Heatmap saved to {out_file}")
