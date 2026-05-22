@@ -1,8 +1,6 @@
 ## Overview
 
-This repository facilitates the evaluation and benchmarking of clustering algorithms. It is specifically designed to compare the performance, execution time, and error costs of standard Lloyd's $k$-means against biased and uniform coreset sampling techniques.
-
-To ensure data integrity across multiple executions, the pipeline utilizes a decentralized logging architecture. Each algorithm writes to independent metric files, which are later merged in memory for global performance comparisons.
+This repository evaluates the performance of different of clustering algorithms. It is specifically designed to compare the execution time and error costs of standard Lloyd's $k$-means against biased and uniform coreset sampling techniques. To ensure data integrity across multiple executions, the pipeline separates the logging for each algorithm into independent metric files. These are later merged in memory for global performance comparisons.
 
 <br><br>
 
