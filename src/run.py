@@ -17,8 +17,8 @@ k_values = [2, 4, 8, 16, 32, 64]
 q_budgets = [64, 128, 256, 512, 1024, 4096]
 
 # Feature Toggles
-enable_metrics = False
-enable_output = True
+enable_metrics = True
+enable_output = False
 
 
 
@@ -84,7 +84,7 @@ def run_uniform_coreset(data, k, q):
 
 
 # will record the performance of each algorithm in metrics
-def dataset_metrics(input_path, file_name, writer):
+def dataset_metrics(input_path, file_name, writer1, writer2, writer3):
 
     print(f"\n{'='*30}\nSTARTING BATCH FOR [{file_name}]\n{'='*30}")
 
@@ -102,25 +102,25 @@ def dataset_metrics(input_path, file_name, writer):
                     #run the loyd version
                     cost_loyd, time_loyd = run_standard_loyd(data, k)
 
+                    # log the results for loyd
+                    writer1.writerow([
+                        file_name, k, q, i, cost_loyd, round(time_loyd, 4)
+                    ])
+
                     # run the biased coreset version
                     cost_biased, time_biased = run_biased_coreset(data, k, q)
+
+                    # log the results for biased
+                    writer2.writerow([
+                        file_name, k, q, i, cost_biased, round(time_biased, 4)
+                    ])
                     
                     # run the uniform coreset version
                     cost_uniform, time_uniform = run_uniform_coreset(data, k, q)
                     
-                    # log the results
-                    writer.writerow([
-                        file_name, 
-                        metadata['type'], 
-                        k, 
-                        q, 
-                        i, 
-                        cost_loyd,
-                        round(time_loyd, 4), 
-                        cost_biased, 
-                        round(time_biased, 4),
-                        cost_uniform,
-                        round(time_uniform, 4)
+                    # log the results for uniform
+                    writer3.writerow([
+                        file_name, k, q, i, cost_uniform, round(time_uniform, 4)
                     ])
                         
                     print(f"    Iter {i}: Biased Ratio: {cost_biased / cost_loyd:.3f} | Uniform Ratio: {cost_uniform / cost_loyd:.3f}")
@@ -158,18 +158,30 @@ def dataset_output(file_path, file_output, file_name):
 
 def main():
 
-    metrics_file = None
-    writer = None
+    metrics_file1 = None
+    metrics_file2 = None
+    metrics_file3 = None
+    writer1 = None
+    writer2 = None
+    writer3 = None
 
     if (enable_metrics):
-        metrics_file = open("metrics/metrics.csv", mode='w', newline='')
-        writer = csv.writer(metrics_file)
-        writer.writerow([
-            "Dataset_Name", "Dataset_Type", 
-            "K_Clusters", "Q_Budget", "Iteration", 
-            "Cost_Loyd", "Time_Loyd", 
-            "Cost_Biased", "Time_Biased", 
-            "Cost_Uniform", "Time_Uniform"
+        metrics_file1 = open("metrics/metrics_loyd.csv", mode='w', newline='')
+        writer1 = csv.writer(metrics_file1)
+        writer1.writerow([
+            "Dataset", "Clusters", "Budget", "Iteration", "Cost", "Time"
+        ])
+
+        metrics_file2 = open("metrics/metrics_biased.csv", mode='w', newline='')
+        writer2 = csv.writer(metrics_file2)
+        writer2.writerow([
+            "Dataset", "Clusters", "Budget", "Iteration", "Cost", "Time"
+        ])
+
+        metrics_file3 = open("metrics/metrics_uniform.csv", mode='w', newline='')
+        writer3 = csv.writer(metrics_file3)
+        writer3.writerow([
+            "Dataset", "Clusters", "Budget", "Iteration", "Cost", "Time"
         ])
 
     # iterate through input datasets
@@ -183,13 +195,19 @@ def main():
         os.makedirs(file_output, exist_ok=True)
         
         if enable_metrics:
-            dataset_metrics(file_path, file_name, writer)
+            dataset_metrics(file_path, file_name, writer1, writer2, writer3)
                 
         if enable_output:
             dataset_output(file_path, file_output, file_name)
 
-    if metrics_file is not None:
-        metrics_file.close()
+    if metrics_file1 is not None:
+        metrics_file1.close()
+
+    if metrics_file2 is not None:
+        metrics_file2.close()
+
+    if metrics_file3 is not None:
+        metrics_file3.close()
 
 
 

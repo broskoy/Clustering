@@ -16,7 +16,7 @@ def generate_plot(data, centers, metadata, output_path, title="Cluster Visualiza
     elif dims == 3:
         _plot_3d_rgb(data, centers, output_path, title)
     elif dims == 6:
-        _plot_6d(data, centers, output_path, title, dims)
+        _plot_6d(data, centers, output_path, title)
     else:
         print(f"Visualization skipped: No plotting logic for {dims}D data.")
 
@@ -94,7 +94,7 @@ def _plot_3d_rgb(data, centers, output_path, title):
 
 
 
-def _plot_6d(data, centers, output_path, title, dims):
+def _plot_6d(data, centers, output_path, title):
 
     fig = plt.figure(figsize=(16, 8))
     fig.suptitle(title, fontsize=16, fontweight='bold')
@@ -125,7 +125,7 @@ def _plot_6d(data, centers, output_path, title, dims):
     ax2 = fig.add_subplot(122, polar=True)
     
     # Compute angles for each dimension spoke
-    angles = np.linspace(0, 2 * np.pi, dims, endpoint=False).tolist()
+    angles = np.linspace(0, 2 * np.pi, 6, endpoint=False).tolist()
     angles += angles[:1] # Close the circle
     
     # Use original labels

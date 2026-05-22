@@ -23,9 +23,6 @@ The overall weak coreset, denoted as S, is constructed by aggregating all the in
 **Parameter Configuration and Optimization Strategy**  
 Translating the theoretical bounds of the weak coreset algorithm into practical Python code requires a specific strategy for handling the input parameters. The theoretical formulas are designed to guarantee success in the absolute worst-case scenarios, meaning strict parameter choices can lead to impractically large sample sizes.
 
-**Determining the Compression Level (k)**  
-The parameter k represents the target number of clusters, which directly corresponds to the number of unique colors in the final compressed image. This parameter dictates the compression ratio. The experimental plan involves running the pipeline across varying color depths, specifically testing k=8,16,32, and 64. The resulting visual quality (PSNR) and execution time will be plotted against these k values to evaluate the algorithm's scalability.
-
 **Managing the Error Bound (ϵ) and Sample Size**  
 The error parameter ϵ defines the acceptable deviation between the coreset's clustering cost and the mathematically optimal clustering cost. The paper dictates that the required sample sizes for the inner and outer sets must satisfy the following bound:
 
