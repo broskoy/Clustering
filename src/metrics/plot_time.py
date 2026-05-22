@@ -4,19 +4,46 @@ import matplotlib.pyplot as plt
 import os
 
 
+# the fully merged dataset 
+global_df = None
+
+
+def merge_data():
+    global global_df
+
+    # load the files
+    df_loyd = pd.read_csv("metrics/metrics_loyd.csv")
+    df_biased = pd.read_csv("metrics/metrics_biased.csv")
+    df_uniform = pd.read_csv("metrics/metrics_uniform.csv")
+
+    # rename columns to prevent suffix collisions
+    df_loyd = df_loyd.rename(columns={'Cost': 'Cost_Loyd', 'Time': 'Time_Loyd'})
+    df_biased = df_biased.rename(columns={'Cost': 'Cost_Biased', 'Time': 'Time_Biased'})
+    df_uniform = df_uniform.rename(columns={'Cost': 'Cost_Uniform', 'Time': 'Time_Uniform'})
+
+    # define the common keys
+    merge_keys = ['Dataset', 'Clusters', 'Budget', 'Iteration']
+
+    # merge consecutively
+    df_merged = pd.merge(df_loyd, df_biased, on=merge_keys)
+    df_merged = pd.merge(df_merged, df_uniform, on=merge_keys)
+
+    global_df = df_merged
+
+
 
 
 def plot_biased_heatmap():
-    df = pd.read_csv("metrics/metrics.csv")
+    df = global_df.copy()
 
     # Calculate the ratio
     df['Time_Ratio_Biased'] = df['Time_Loyd'] / df['Time_Biased']
     
     # group by Q and K then average the execution times across iterations
-    grouped = df.groupby(['Q_Budget', 'K_Clusters'])[['Time_Ratio_Biased']].mean().reset_index()
+    grouped = df.groupby(['Budget', 'Clusters'])[['Time_Ratio_Biased']].mean().reset_index()
     
     # Pivot the data into a 2D matrix format
-    pivot = grouped.pivot(index='Q_Budget', columns='K_Clusters', values='Time_Ratio_Biased')
+    pivot = grouped.pivot(index='Budget', columns='Clusters', values='Time_Ratio_Biased')
     pivot = pivot.sort_index(ascending=False) # Largest Q at the top
     
     plt.figure(figsize=(12, 8))
@@ -54,16 +81,16 @@ def plot_biased_heatmap():
 
 
 def plot_uniform_heatmap():
-    df = pd.read_csv("metrics/metrics.csv")
+    df = global_df.copy()
 
     # Calculate the ratio
     df['Time_Ratio_Uniform'] = df['Time_Loyd'] / df['Time_Uniform']
     
     # group by Q and K then average the execution times across iterations
-    grouped = df.groupby(['Q_Budget', 'K_Clusters'])[['Time_Ratio_Uniform']].mean().reset_index()
+    grouped = df.groupby(['Budget', 'Clusters'])[['Time_Ratio_Uniform']].mean().reset_index()
     
     # Pivot the data into a 2D matrix format
-    pivot = grouped.pivot(index='Q_Budget', columns='K_Clusters', values='Time_Ratio_Uniform')
+    pivot = grouped.pivot(index='Budget', columns='Clusters', values='Time_Ratio_Uniform')
     pivot = pivot.sort_index(ascending=False) # Largest Q at the top
     
     plt.figure(figsize=(12, 8))
@@ -101,17 +128,17 @@ def plot_uniform_heatmap():
 
 
 def plot_lines_k():
-    df = pd.read_csv("metrics/metrics.csv")
+    df = global_df.copy()
 
      # Average the time across all Q budgets to show how scaling K impacts total runtime
-    agg_k = df.groupby('K_Clusters')[['Time_Loyd', 'Time_Biased', 'Time_Uniform']].mean().reset_index()
+    agg_k = df.groupby('Clusters')[['Time_Loyd', 'Time_Biased', 'Time_Uniform']].mean().reset_index()
     
     plt.figure(figsize=(10, 6))
     
     # Plot all three lines on the same axis
-    plt.plot(agg_k['K_Clusters'], agg_k['Time_Loyd'], marker='o', label='Standard Lloyd', color='#d62728', linewidth=2.5)
-    plt.plot(agg_k['K_Clusters'], agg_k['Time_Biased'], marker='s', label='Biased Coreset', color='#1f77b4', linewidth=2.5)
-    plt.plot(agg_k['K_Clusters'], agg_k['Time_Uniform'], marker='^', label='Uniform Coreset', color='#2ca02c', linewidth=2.5)
+    plt.plot(agg_k['Clusters'], agg_k['Time_Loyd'], marker='o', label='Standard Lloyd', color='#d62728', linewidth=2.5)
+    plt.plot(agg_k['Clusters'], agg_k['Time_Biased'], marker='s', label='Biased Coreset', color='#1f77b4', linewidth=2.5)
+    plt.plot(agg_k['Clusters'], agg_k['Time_Uniform'], marker='^', label='Uniform Coreset', color='#2ca02c', linewidth=2.5)
     
     plt.title('Execution Time Scaling (k)')
     plt.xlabel('Number of Clusters (k)')
@@ -128,17 +155,17 @@ def plot_lines_k():
 
 
 def plot_lines_q():
-    df = pd.read_csv("metrics/metrics.csv")
+    df = global_df.copy()
 
      # Average the time across all Q budgets to show how scaling K impacts total runtime
-    agg_k = df.groupby('Q_Budget')[['Time_Loyd', 'Time_Biased', 'Time_Uniform']].mean().reset_index()
+    agg_k = df.groupby('Budget')[['Time_Loyd', 'Time_Biased', 'Time_Uniform']].mean().reset_index()
     
     plt.figure(figsize=(10, 6))
     
     # Plot all three lines on the same axis
-    plt.plot(agg_k['Q_Budget'], agg_k['Time_Loyd'], marker='o', label='Standard Lloyd', color='#d62728', linewidth=2.5)
-    plt.plot(agg_k['Q_Budget'], agg_k['Time_Biased'], marker='s', label='Biased Coreset', color='#1f77b4', linewidth=2.5)
-    plt.plot(agg_k['Q_Budget'], agg_k['Time_Uniform'], marker='^', label='Uniform Coreset', color='#2ca02c', linewidth=2.5)
+    plt.plot(agg_k['Budget'], agg_k['Time_Loyd'], marker='o', label='Standard Lloyd', color='#d62728', linewidth=2.5)
+    plt.plot(agg_k['Budget'], agg_k['Time_Biased'], marker='s', label='Biased Coreset', color='#1f77b4', linewidth=2.5)
+    plt.plot(agg_k['Budget'], agg_k['Time_Uniform'], marker='^', label='Uniform Coreset', color='#2ca02c', linewidth=2.5)
     
     plt.title('Execution Time Scaling |Q|')
     plt.xlabel('Coreset Size |Q|')
@@ -155,6 +182,7 @@ def plot_lines_q():
 
 
 if __name__ == "__main__":
+    merge_data()
 
     plot_biased_heatmap()
 
