@@ -8,9 +8,7 @@ from src.loader import load_dataset, encode_image
 from src.coreset import build_coreset
 from src.visualize import generate_plot 
 
-# ================================
-# 1 CONFIGURATION CONSTANTS
-# ================================
+
 
 
 # Execution Parameters
@@ -25,13 +23,8 @@ enable_output = True
 
 
 
-# ================================
-# 2 CLUSTERING METHODS
-# ================================
-
-
+# Executes a standard loyd method for clustering
 def run_standard_loyd(data, k):
-    """Executes a standard loyd method for clustering"""
     start_time = time.time()
     kmeans = KMeans(n_clusters=k, init='k-means++', n_init=1, max_iter=300, random_state=42)
     kmeans.fit(data)
@@ -47,8 +40,8 @@ def run_standard_loyd(data, k):
 
 
 
+# Executes a single coreset extraction and clustering run
 def run_biased_coreset(data, k, q):
-    """Executes a single coreset extraction and clustering run"""
     start_time = time.time()
     
     coreset_points, coreset_weights = build_coreset(data, k, q)
@@ -67,8 +60,8 @@ def run_biased_coreset(data, k, q):
 
 
 
+# Executes uniform random sampling then clusters
 def run_uniform_coreset(data, k, q):
-    """Executes uniform random sampling then clusters"""
     start_time = time.time()
     
     # Uniformly select random indices
@@ -90,14 +83,8 @@ def run_uniform_coreset(data, k, q):
 
 
 
-
-# ================================
-# 3 MAIN EXECUTION
-# ================================
-
-
 # will record the performance of each algorithm in metrics
-def dataset_metrics(input_path, output_path, file_name, writer):
+def dataset_metrics(input_path, file_name, writer):
 
     print(f"\n{'='*30}\nSTARTING BATCH FOR [{file_name}]\n{'='*30}")
 
@@ -196,7 +183,7 @@ def main():
         os.makedirs(file_output, exist_ok=True)
         
         if enable_metrics:
-            dataset_metrics(file_path, file_output, file_name, writer)
+            dataset_metrics(file_path, file_name, writer)
                 
         if enable_output:
             dataset_output(file_path, file_output, file_name)

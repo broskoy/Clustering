@@ -20,7 +20,7 @@ def get_initial_approximation(data, k, q):
     return labels, centers
 
 
-import time
+
 
 def calculate_epsilon_radius(cluster_points, center, epsilon):
     # calculate the cost for all points in this cluster
