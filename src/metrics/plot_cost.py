@@ -81,7 +81,7 @@ def plot_biased_heatmap():
     plt.ylabel('Coreset Size |Q|')
     plt.title('Cost Comparison: Biased Coreset vs Standard Loyd')
     
-    out_file = os.path.join("metrics/cost", f"heatmap_cost_biased.png")
+    out_file = os.path.join("metrics/cost", f"cost_heatmap_biased.png")
     plt.savefig(out_file, dpi=300, bbox_inches='tight')
     plt.close()
     print(f"Heatmap saved to {out_file}")
@@ -127,7 +127,7 @@ def plot_uniform_heatmap():
     plt.ylabel('Coreset Size |Q|')
     plt.title('Cost Comparison: Uniform Coreset vs Standard Loyd')
     
-    out_file = os.path.join("metrics/cost", f"heatmap_cost_uniform.png")
+    out_file = os.path.join("metrics/cost", f"cost_heatmap_uniform.png")
     plt.savefig(out_file, dpi=300, bbox_inches='tight')
     plt.close()
     print(f"Heatmap saved to {out_file}")
