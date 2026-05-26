@@ -14,7 +14,7 @@ from src.visualize import generate_plot
 # Execution Parameters
 iterations = 5
 k_values = [2, 4, 8, 16, 32, 64]
-q_budgets = [64, 128, 256, 512, 1024, 4096]
+q_budgets = [64, 128, 256, 512, 1024, 2048, 4096]
 
 # Feature Toggles
 enable_metrics = True
@@ -26,7 +26,7 @@ enable_output = False
 # Executes a standard loyd method for clustering
 def run_standard_loyd(data, k):
     start_time = time.time()
-    kmeans = KMeans(n_clusters=k, init='k-means++', n_init=1, max_iter=300, random_state=42)
+    kmeans = KMeans(n_clusters=k, init='k-means++', n_init=1, max_iter=100, random_state=42)
     kmeans.fit(data)
 
     labels = kmeans.predict(data)
@@ -46,7 +46,7 @@ def run_biased_coreset(data, k, q):
     
     coreset_points, coreset_weights = build_coreset(data, k, q)
     
-    kmeans = KMeans(n_clusters=k, init='k-means++', n_init=1, max_iter=300, random_state=42)
+    kmeans = KMeans(n_clusters=k, init='k-means++', n_init=1, max_iter=100, random_state=42)
     kmeans.fit(coreset_points, sample_weight=coreset_weights)
     
     labels = kmeans.predict(data)
@@ -69,7 +69,7 @@ def run_uniform_coreset(data, k, q):
     random_points = data[indices]
     
     # Run K-Means without weights
-    kmeans = KMeans(n_clusters=k, init='k-means++', n_init=1, max_iter=300, random_state=42)
+    kmeans = KMeans(n_clusters=k, init='k-means++', n_init=1, max_iter=100, random_state=42)
     kmeans.fit(random_points)
     
     labels = kmeans.predict(data)
@@ -123,10 +123,10 @@ def dataset_metrics(input_path, file_name, writer1, writer2, writer3):
                         file_name, k, q, i, cost_uniform, round(time_uniform, 4)
                     ])
                         
-                    print(f"    Iter {i}: Biased Ratio: {cost_biased / cost_loyd:.3f} | Uniform Ratio: {cost_uniform / cost_loyd:.3f}")
+                    print(f"    Iteration {i}: {time_loyd:.3f} | {time_biased:.3f} | {time_uniform:.3f}")
                             
                 except Exception as e:
-                    print(f"    Iter {i} FAILED: {e}")
+                    print(f"    Iteration {i} Failed: {e}")
 
 
 

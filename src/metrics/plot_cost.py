@@ -24,11 +24,17 @@ def merge_data():
     df_loyd = pd.read_csv("metrics/metrics_loyd.csv")
     df_biased = pd.read_csv("metrics/metrics_biased.csv")
     df_uniform = pd.read_csv("metrics/metrics_uniform.csv")
+    df_egb = pd.read_csv("metrics/metrics_egb.csv")
+    df_lightweight = pd.read_csv("metrics/metrics_lightweight.csv")
+    df_ranked = pd.read_csv("metrics/metrics_ranked.csv")
 
     # rename columns to prevent suffix collisions
     df_loyd = df_loyd.rename(columns={'Cost': 'Cost_Loyd', 'Time': 'Time_Loyd'})
     df_biased = df_biased.rename(columns={'Cost': 'Cost_Biased', 'Time': 'Time_Biased'})
     df_uniform = df_uniform.rename(columns={'Cost': 'Cost_Uniform', 'Time': 'Time_Uniform'})
+    df_egb = df_egb.rename(columns={'Cost': 'Cost_Egb', 'Time': 'Time_Egb'})
+    df_lightweight = df_lightweight.rename(columns={'Cost': 'Cost_Lightweight', 'Time': 'Time_Lightweight'})
+    df_ranked = df_ranked.rename(columns={'Cost': 'Cost_Ranked', 'Time': 'Time_Ranked'})
 
     # define the common keys
     merge_keys = ['Dataset', 'Clusters', 'Budget', 'Iteration']
@@ -36,6 +42,12 @@ def merge_data():
     # merge consecutively
     df_merged = pd.merge(df_loyd, df_biased, on=merge_keys)
     df_merged = pd.merge(df_merged, df_uniform, on=merge_keys)
+    df_merged = pd.merge(df_merged, df_egb, on=merge_keys)
+    df_merged = pd.merge(df_merged, df_lightweight, on=merge_keys)
+    df_merged = pd.merge(df_merged, df_ranked, on=merge_keys)
+
+    # filer for specific dataset
+    df_merged = df_merged[df_merged['Dataset'] == 'spotify']
 
     global_df = df_merged
 
@@ -84,7 +96,7 @@ def plot_biased_heatmap():
     out_file = os.path.join("metrics/cost", f"cost_heatmap_biased.png")
     plt.savefig(out_file, dpi=300, bbox_inches='tight')
     plt.close()
-    print(f"Heatmap saved to {out_file}")
+    print(f"Saved {out_file}")
 
 
 
@@ -130,7 +142,7 @@ def plot_uniform_heatmap():
     out_file = os.path.join("metrics/cost", f"cost_heatmap_uniform.png")
     plt.savefig(out_file, dpi=300, bbox_inches='tight')
     plt.close()
-    print(f"Heatmap saved to {out_file}")
+    print(f"Saved {out_file}")
 
 
 
@@ -140,7 +152,7 @@ def plot_lines_k():
     df = global_df.copy()
 
     # Average the time across all Q budgets to show how scaling K impacts total runtime
-    agg_k = df.groupby('Clusters')[['Cost_Loyd', 'Cost_Biased', 'Cost_Uniform']].mean().reset_index()
+    agg_k = df.groupby('Clusters')[['Cost_Loyd', 'Cost_Biased', 'Cost_Uniform', 'Cost_Egb', 'Cost_Lightweight','Cost_Ranked']].mean().reset_index()
     
     plt.figure(figsize=(10, 6))
     
@@ -148,7 +160,11 @@ def plot_lines_k():
     plt.plot(agg_k['Clusters'], agg_k['Cost_Loyd'], marker='o', label='Standard Lloyd', color='#d62728', linewidth=2.5)
     plt.plot(agg_k['Clusters'], agg_k['Cost_Biased'], marker='s', label='Biased Coreset', color='#1f77b4', linewidth=2.5)
     plt.plot(agg_k['Clusters'], agg_k['Cost_Uniform'], marker='^', label='Uniform Coreset', color='#2ca02c', linewidth=2.5)
-    
+    plt.plot(agg_k['Clusters'], agg_k['Cost_Egb'], marker='^', label='EGB Coreset', color='#eed142', linewidth=2.5)
+    #plt.plot(agg_k['Clusters'], agg_k['Cost_Lightweight'], marker='^', label='Lightweight Coreset', color='#ffa43d', linewidth=2.5)
+    plt.plot(agg_k['Clusters'], agg_k['Cost_Ranked'], marker='^', label='Ranked Coreset', color="#42eed4", linewidth=2.5)
+
+
     plt.title('Cost Comparison Scaling (k)')
     plt.xlabel('Number of Clusters (k)')
     plt.ylabel('Average Cost')
@@ -158,7 +174,7 @@ def plot_lines_k():
     out_file_line = os.path.join("metrics/cost", 'cost_lines_k.png')
     plt.savefig(out_file_line, dpi=300, bbox_inches='tight')
     plt.close()
-    print(f"Saved: {out_file_line}")
+    print(f"Saved {out_file_line}")
 
 
 
@@ -167,7 +183,7 @@ def plot_lines_q():
     df = global_df.copy()
 
     # Average the time across all Q budgets
-    agg_k = df.groupby('Budget')[['Cost_Loyd', 'Cost_Biased', 'Cost_Uniform']].mean().reset_index()
+    agg_k = df.groupby('Budget')[['Cost_Loyd', 'Cost_Biased', 'Cost_Uniform', 'Cost_Egb', 'Cost_Lightweight', 'Cost_Ranked']].mean().reset_index()
     
     plt.figure(figsize=(10, 6))
     
@@ -175,7 +191,10 @@ def plot_lines_q():
     plt.plot(agg_k['Budget'], agg_k['Cost_Loyd'], marker='o', label='Standard Lloyd', color='#d62728', linewidth=2.5)
     plt.plot(agg_k['Budget'], agg_k['Cost_Biased'], marker='s', label='Biased Coreset', color='#1f77b4', linewidth=2.5)
     plt.plot(agg_k['Budget'], agg_k['Cost_Uniform'], marker='^', label='Uniform Coreset', color='#2ca02c', linewidth=2.5)
-    
+    plt.plot(agg_k['Budget'], agg_k['Cost_Egb'], marker='^', label='EGB Coreset', color="#eed142", linewidth=2.5)
+    #plt.plot(agg_k['Budget'], agg_k['Cost_Lightweight'], marker='^', label='Lightweight Coreset', color="#ffa43d", linewidth=2.5)
+    plt.plot(agg_k['Budget'], agg_k['Cost_Ranked'], marker='^', label='Ranked Coreset', color="#42eed4", linewidth=2.5)
+
     plt.title('Cost Comparison Scaling |Q|')
     plt.xlabel('Coreset Size |Q|')
     plt.ylabel('Average Cost')
@@ -185,7 +204,7 @@ def plot_lines_q():
     out_file_line = os.path.join("metrics/cost", 'cost_lines_q.png')
     plt.savefig(out_file_line, dpi=300, bbox_inches='tight')
     plt.close()
-    print(f"Saved: {out_file_line}")
+    print(f"Saved {out_file_line}")
 
 
 
