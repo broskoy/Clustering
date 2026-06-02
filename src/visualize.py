@@ -12,18 +12,18 @@ def generate_plot(data, centers, metadata, output_path, title="Cluster Visualiza
     dims = metadata.get('dims', data.shape[1])
     
     if dims == 2:
-        _plot_2d(data, centers, output_path, title)
+        plot_2d(data, centers, output_path, title)
     elif dims == 3:
-        _plot_3d_rgb(data, centers, output_path, title)
+        plot_3d_rgb(data, centers, output_path, title)
     elif dims == 6:
-        _plot_6d(data, centers, output_path, title)
+        plot_6d(data, centers, output_path, title)
     else:
         print(f"Visualization skipped: No plotting logic for {dims}D data.")
 
 
 
 
-def _plot_2d(data, centers, output_path, title):
+def plot_2d(data, centers, output_path, title):
     plt.figure(figsize=(10, 10))
     
     # Original data in the background
@@ -44,7 +44,7 @@ def _plot_2d(data, centers, output_path, title):
 
 
 
-def _plot_3d_rgb(data, centers, output_path, title):
+def plot_3d_rgb(data, centers, output_path, title):
     # Downsample background pixels for performance and clean plotting
     np.random.seed(42)
     sample_size = min(50000, data.shape[0])
@@ -94,7 +94,7 @@ def _plot_3d_rgb(data, centers, output_path, title):
 
 
 
-def _plot_6d(data, centers, output_path, title):
+def plot_6d(data, centers, output_path, title):
 
     fig = plt.figure(figsize=(16, 8))
     fig.suptitle(title, fontsize=16, fontweight='bold')
@@ -102,12 +102,12 @@ def _plot_6d(data, centers, output_path, title):
     # --- PCA Scatter Plot ---
     ax1 = fig.add_subplot(121)
     
-    # Downsample background data to keep plotting fast and prevent memory crashes
+    # Downsample background data
     np.random.seed(42)
     sample_size = min(50000, data.shape[0])
     bg_points = data[np.random.choice(data.shape[0], sample_size, replace=False)]
     
-    # Calculate PCA to project N-dimensions down to 2-dimensions
+    # calculate pca to project down
     pca = PCA(n_components=2)
     data_2d = pca.fit_transform(bg_points)
     centers_2d = pca.transform(centers)
@@ -115,7 +115,7 @@ def _plot_6d(data, centers, output_path, title):
     ax1.scatter(data_2d[:, 0], data_2d[:, 1], c='gray', s=5, alpha=0.1)
     ax1.scatter(centers_2d[:, 0], centers_2d[:, 1], c='red', marker='D', s=50, edgecolors='black')
     
-    ax1.set_title("2D PCA Projection With Centers")
+    ax1.set_title("2D PCA Projection")
     ax1.set_xlabel("Principal Component 1")
     ax1.set_ylabel("Principal Component 2")
     ax1.grid(True, linestyle='--', alpha=0.6)
@@ -124,12 +124,12 @@ def _plot_6d(data, centers, output_path, title):
     # --- Radar Chart ---
     ax2 = fig.add_subplot(122, polar=True)
     
-    # Compute angles for each dimension spoke
+    # compute angles for each feature spoke
     angles = np.linspace(0, 2 * np.pi, 6, endpoint=False).tolist()
-    angles += angles[:1] # Close the circle
+    angles += angles[:1]
     
     # Use original labels
-    labels = ["Danceability", "Valence", "Energy", "Acousticness", "Instrumentalness", "Speechiness"]
+    labels = ["Danceability", "Energy", "Speechiness", "Acousticness", "Instrumentalness", "Valence"]
     ax2.set_xticks(angles[:-1])
     ax2.set_xticklabels(labels)
     
@@ -138,12 +138,8 @@ def _plot_6d(data, centers, output_path, title):
         values = center.tolist()
         values += values[:1] # Close the circle
         ax2.plot(angles, values, linewidth=1.5, alpha=0.8)
-        
-        # Only fill the polygons if K is small to prevent visual clutter
-        if len(centers) <= 8:
-            ax2.fill(angles, values, alpha=0.1)
 
-    ax2.set_title("Micro View: Cluster Center Features")
+    ax2.set_title("Cluster Features Radar")
     
     plt.tight_layout()
     os.makedirs(os.path.dirname(output_path), exist_ok=True)

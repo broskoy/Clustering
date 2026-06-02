@@ -18,13 +18,6 @@ def load_dataset(file_path):
         metadata['type'] = 'image'
         metadata['dims'] = 3
         return data, metadata
-    
-    # png loading
-    if extension == '.jpg':
-        data, metadata = decode_image(file_path)
-        metadata['type'] = 'image'
-        metadata['dims'] = 3
-        return data, metadata
         
     # csv loading
     elif extension == '.csv':
@@ -34,7 +27,7 @@ def load_dataset(file_path):
         return data, metadata
         
     else:
-        raise ValueError(f"Unsupported file format: {extension}. Please provide a JPG, PNG or CSV.")
+        raise ValueError(f"Unsupported file format {extension}. Please provide a PNG or CSV.")
     
 
 

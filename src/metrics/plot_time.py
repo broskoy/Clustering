@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.colors import LinearSegmentedColormap
 import os
 
 
@@ -18,6 +19,7 @@ def merge_data():
     df_egb = pd.read_csv("metrics/metrics_egb.csv")
     df_lightweight = pd.read_csv("metrics/metrics_lightweight.csv")
     df_ranked = pd.read_csv("metrics/metrics_ranked.csv")
+    df_kchen = pd.read_csv("metrics/metrics_kchen.csv")
 
     # rename columns to prevent suffix collisions
     df_loyd = df_loyd.rename(columns={'Cost': 'Cost_Loyd', 'Time': 'Time_Loyd'})
@@ -26,6 +28,7 @@ def merge_data():
     df_egb = df_egb.rename(columns={'Cost': 'Cost_Egb', 'Time': 'Time_Egb'})
     df_lightweight = df_lightweight.rename(columns={'Cost': 'Cost_Lightweight', 'Time': 'Time_Lightweight'})
     df_ranked = df_ranked.rename(columns={'Cost': 'Cost_Ranked', 'Time': 'Time_Ranked'})
+    df_kchen = df_kchen.rename(columns={'Cost': 'Cost_Kchen', 'Time': 'Time_Kchen'})
 
     # define the common keys
     merge_keys = ['Dataset', 'Clusters', 'Budget', 'Iteration']
@@ -36,9 +39,10 @@ def merge_data():
     df_merged = pd.merge(df_merged, df_egb, on=merge_keys)
     df_merged = pd.merge(df_merged, df_lightweight, on=merge_keys)
     df_merged = pd.merge(df_merged, df_ranked, on=merge_keys)
+    df_merged = pd.merge(df_merged, df_kchen, on=merge_keys)
 
     # filer for specific dataset
-    df_merged = df_merged[df_merged['Dataset'] == 'uber']
+    df_merged = df_merged[df_merged['Dataset'] == 'birb']
 
     global_df = df_merged
 
@@ -61,7 +65,9 @@ def plot_biased_heatmap():
     plt.figure(figsize=(12, 8))
     
     # Plot the heatmap
-    plt.imshow(pivot.values, cmap='Blues', aspect='auto')
+    colors = ["#929fcb","#00229B"]
+    custom_cmap = LinearSegmentedColormap.from_list("custom_RdYlGn", colors)
+    plt.imshow(pivot.values, cmap=custom_cmap, aspect='auto')
         
     # Add the text annotations inside the boxes
     min_val = np.nanmin(pivot.values)
@@ -108,7 +114,9 @@ def plot_uniform_heatmap():
     plt.figure(figsize=(12, 8))
     
     # Plot the heatmap
-    plt.imshow(pivot.values, cmap='Greens', aspect='auto')
+    colors = ["#7dcc8e","#006F14"]
+    custom_cmap = LinearSegmentedColormap.from_list("custom_RdYlGn", colors)
+    plt.imshow(pivot.values, cmap=custom_cmap, aspect='auto')
         
     # Add the text annotations inside the boxes
     min_val = np.nanmin(pivot.values)
@@ -118,10 +126,7 @@ def plot_uniform_heatmap():
         for j in range(pivot.shape[1]):
             val = pivot.values[i, j]
             if not np.isnan(val):
-                # Dynamic text color: Light text on dark backgrounds, Dark text on light backgrounds
-                normalized_val = (val - min_val) / (max_val - min_val + 1e-9)
-                color = "white" if normalized_val > 0.6 else "black"
-                plt.text(j, i, f"{val:.2f}", ha="center", va="center", color=color, fontsize=10, fontweight='bold')
+                plt.text(j, i, f"{val:.2f}", ha="center", va="center", color="black", fontsize=10, fontweight='bold')
     
     # Format axes
     plt.colorbar(label='Execution Speedup')
@@ -143,7 +148,7 @@ def plot_lines_k():
     df = global_df.copy()
 
      # Average the time across all Q budgets to show how scaling K impacts total runtime
-    agg_k = df.groupby('Clusters')[['Time_Loyd', 'Time_Biased', 'Time_Uniform', 'Time_Egb', 'Time_Lightweight', 'Time_Ranked']].mean().reset_index()
+    agg_k = df.groupby('Clusters')[['Time_Loyd', 'Time_Biased', 'Time_Uniform', 'Time_Egb', 'Time_Lightweight', 'Time_Ranked', 'Time_Kchen']].mean().reset_index()
     
     plt.figure(figsize=(10, 6))
     
@@ -154,7 +159,8 @@ def plot_lines_k():
     plt.plot(agg_k['Clusters'], agg_k['Time_Egb'], marker='^', label='EGB Coreset', color='#eed142', linewidth=2.5)
     plt.plot(agg_k['Clusters'], agg_k['Time_Lightweight'], marker='^', label='Lightweight Coreset', color='#ffa43d', linewidth=2.5)
     plt.plot(agg_k['Clusters'], agg_k['Time_Ranked'], marker='^', label='Ranked Coreset', color="#42eed4", linewidth=2.5)
-    
+    plt.plot(agg_k['Clusters'], agg_k['Time_Kchen'], marker='^', label='Kchen Coreset', color="#7842ee", linewidth=2.5)
+
     plt.title('Execution Time Scaling (k)')
     plt.xlabel('Number of Clusters (k)')
     plt.ylabel('Average Execution Time (Seconds)')
@@ -173,7 +179,7 @@ def plot_lines_q():
     df = global_df.copy()
 
      # Average the time across all Q budgets to show how scaling K impacts total runtime
-    agg_k = df.groupby('Budget')[['Time_Loyd', 'Time_Biased', 'Time_Uniform', 'Time_Egb', 'Time_Lightweight', 'Time_Ranked']].mean().reset_index()
+    agg_k = df.groupby('Budget')[['Time_Loyd', 'Time_Biased', 'Time_Uniform', 'Time_Egb', 'Time_Lightweight', 'Time_Ranked', 'Time_Kchen']].mean().reset_index()
     
     plt.figure(figsize=(10, 6))
     
@@ -184,7 +190,8 @@ def plot_lines_q():
     plt.plot(agg_k['Budget'], agg_k['Time_Egb'], marker='^', label='EGB Coreset', color='#eed142', linewidth=2.5)
     plt.plot(agg_k['Budget'], agg_k['Time_Lightweight'], marker='^', label='Lightweight Coreset', color='#ffa43d', linewidth=2.5)
     plt.plot(agg_k['Budget'], agg_k['Time_Ranked'], marker='^', label='Ranked Coreset', color="#42eed4", linewidth=2.5)
-    
+    plt.plot(agg_k['Budget'], agg_k['Time_Kchen'], marker='^', label='Kchen Coreset', color="#7842ee", linewidth=2.5)
+
     plt.title('Execution Time Scaling |Q|')
     plt.xlabel('Coreset Size |Q|')
     plt.ylabel('Average Execution Time (Seconds)')
