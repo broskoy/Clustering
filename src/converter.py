@@ -76,7 +76,7 @@ def encode_image(labels, centers, metadata, output_image_path):
     reconstructed_image = reconstructed_pixels.reshape((height, width, channels))
     
     # denormalize from 0.0-1.0 float back to 0-255 integers
-    reconstructed_image = (reconstructed_image * 255.0).astype(np.uint8)
+    reconstructed_image = (reconstructed_image * 255).astype(np.uint8)
     
     # convert RGB back to BGR
     reconstructed_image = cv2.cvtColor(reconstructed_image, cv2.COLOR_RGB2BGR)

@@ -7,10 +7,6 @@ import os
 
 
 
-# custom colors
-colors = ["#47c94b","#caf363" , "#ffdd60", "#f39f51", "#e16153"]
-custom_cmap = LinearSegmentedColormap.from_list("custom_RdYlGn", colors)
-
 # the fully merged dataset 
 global_df = None
 
@@ -51,7 +47,7 @@ def merge_data():
     df_merged = pd.merge(df_merged, df_kchen, on=merge_keys)
 
     # filer for specific dataset
-    df_merged = df_merged[df_merged['Dataset'] == 'birb']
+    df_merged = df_merged[df_merged['Dataset'] == 'balloons']
 
     global_df = df_merged
 
@@ -79,6 +75,8 @@ def plot_biased_heatmap():
     plt.figure(figsize=(12, 8))
     
     # color gradient from green to red
+    colors = ["#47c94b","#caf363" , "#ffdd60", "#f39f51", "#e16153"]
+    custom_cmap = LinearSegmentedColormap.from_list("custom_RdYlGn", colors)
     plt.imshow(pivot_table.values, cmap=custom_cmap, aspect='auto', vmin=1.0, vmax=2.5)
     
     # Add the text annotations inside the boxes
@@ -125,6 +123,8 @@ def plot_uniform_heatmap():
     plt.figure(figsize=(12, 8))
      
     # color gradient from green to red
+    colors = ["#47c94b","#caf363" , "#ffdd60", "#f39f51", "#e16153"]
+    custom_cmap = LinearSegmentedColormap.from_list("custom_RdYlGn", colors)
     plt.imshow(pivot_table.values, cmap=custom_cmap, aspect='auto', vmin=1.0, vmax=2.0)
     
     # Add the text annotations inside the boxes
@@ -165,7 +165,7 @@ def plot_lines_k():
     plt.plot(agg_k['Clusters'], agg_k['Cost_Biased'], marker='s', label='Biased Coreset', color='#1f77b4', linewidth=2.5)
     plt.plot(agg_k['Clusters'], agg_k['Cost_Uniform'], marker='^', label='Uniform Coreset', color='#2ca02c', linewidth=2.5)
     plt.plot(agg_k['Clusters'], agg_k['Cost_Egb'], marker='^', label='EGB Coreset', color='#eed142', linewidth=2.5)
-    # plt.plot(agg_k['Clusters'], agg_k['Cost_Lightweight'], marker='^', label='Lightweight Coreset', color='#ffa43d', linewidth=2.5)
+    plt.plot(agg_k['Clusters'], agg_k['Cost_Lightweight'], marker='^', label='Lightweight Coreset', color='#ffa43d', linewidth=2.5)
     plt.plot(agg_k['Clusters'], agg_k['Cost_Ranked'], marker='^', label='Ranked Coreset', color="#42eed4", linewidth=2.5)
     plt.plot(agg_k['Clusters'], agg_k['Cost_Kchen'], marker='^', label='Kchen Coreset', color="#7842ee", linewidth=2.5)
 
@@ -197,7 +197,7 @@ def plot_lines_q():
     plt.plot(agg_k['Budget'], agg_k['Cost_Biased'], marker='s', label='Biased Coreset', color='#1f77b4', linewidth=2.5)
     plt.plot(agg_k['Budget'], agg_k['Cost_Uniform'], marker='^', label='Uniform Coreset', color='#2ca02c', linewidth=2.5)
     plt.plot(agg_k['Budget'], agg_k['Cost_Egb'], marker='^', label='EGB Coreset', color="#eed142", linewidth=2.5)
-    # plt.plot(agg_k['Budget'], agg_k['Cost_Lightweight'], marker='^', label='Lightweight Coreset', color="#ffa43d", linewidth=2.5)
+    plt.plot(agg_k['Budget'], agg_k['Cost_Lightweight'], marker='^', label='Lightweight Coreset', color="#ffa43d", linewidth=2.5)
     plt.plot(agg_k['Budget'], agg_k['Cost_Ranked'], marker='^', label='Ranked Coreset', color="#42eed4", linewidth=2.5)
     plt.plot(agg_k['Budget'], agg_k['Cost_Kchen'], marker='^', label='Kchen Coreset', color="#7842ee", linewidth=2.5)
 

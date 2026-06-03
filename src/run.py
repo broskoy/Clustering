@@ -4,7 +4,7 @@ import csv
 import numpy as np
 from sklearn.cluster import KMeans
 
-from src.loader import load_dataset, encode_image
+from src.converter import load_dataset, encode_image
 from src.coreset import build_coreset
 from src.visualize import generate_plot 
 
@@ -17,8 +17,8 @@ k_values = [2, 4, 8, 16, 32, 64]
 q_budgets = [64, 128, 256, 512, 1024, 2048, 4096]
 
 # Feature Toggles
-enable_metrics = False
-enable_output = True
+enable_metrics = True
+enable_output = False
 
 
 

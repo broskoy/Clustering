@@ -77,10 +77,7 @@ def plot_biased_heatmap():
         for j in range(pivot.shape[1]):
             val = pivot.values[i, j]
             if not np.isnan(val):
-                # Dynamic text color: Light text on dark backgrounds, Dark text on light backgrounds
-                normalized_val = (val - min_val) / (max_val - min_val + 1e-9)
-                color = "white" if normalized_val > 0.6 else "black"
-                plt.text(j, i, f"{val:.2f}", ha="center", va="center", color=color, fontsize=10, fontweight='bold')
+                plt.text(j, i, f"{val:.2f}", ha="center", va="center", color="black", fontsize=10, fontweight='bold')
     
     # Format axes
     plt.colorbar(label='Execution Speedup')
