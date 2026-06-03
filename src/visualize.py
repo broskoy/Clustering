@@ -138,6 +138,7 @@ def plot_6d(data, centers, output_path, title):
         values = center.tolist()
         values += values[:1] # Close the circle
         ax2.plot(angles, values, linewidth=1.5, alpha=0.8)
+        ax2.fill(angles, values, alpha=0.1)
 
     ax2.set_title("Cluster Features Radar")
     
