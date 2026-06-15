@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 import os
@@ -20,20 +21,12 @@ def merge_data():
     df_loyd = pd.read_csv("metrics/metrics_loyd.csv")
     df_biased = pd.read_csv("metrics/metrics_biased.csv")
     df_uniform = pd.read_csv("metrics/metrics_uniform.csv")
-    df_egb = pd.read_csv("metrics/metrics_egb.csv")
-    df_lightweight = pd.read_csv("metrics/metrics_lightweight.csv")
-    df_ranked = pd.read_csv("metrics/metrics_ranked.csv")
-    df_kchen = pd.read_csv("metrics/metrics_kchen.csv")
 
 
     # rename columns to prevent suffix collisions
     df_loyd = df_loyd.rename(columns={'Cost': 'Cost_Loyd', 'Time': 'Time_Loyd'})
     df_biased = df_biased.rename(columns={'Cost': 'Cost_Biased', 'Time': 'Time_Biased'})
     df_uniform = df_uniform.rename(columns={'Cost': 'Cost_Uniform', 'Time': 'Time_Uniform'})
-    df_egb = df_egb.rename(columns={'Cost': 'Cost_Egb', 'Time': 'Time_Egb'})
-    df_lightweight = df_lightweight.rename(columns={'Cost': 'Cost_Lightweight', 'Time': 'Time_Lightweight'})
-    df_ranked = df_ranked.rename(columns={'Cost': 'Cost_Ranked', 'Time': 'Time_Ranked'})
-    df_kchen = df_kchen.rename(columns={'Cost': 'Cost_Kchen', 'Time': 'Time_Kchen'})
 
     # define the common keys
     merge_keys = ['Dataset', 'Clusters', 'Budget', 'Iteration']
@@ -41,13 +34,9 @@ def merge_data():
     # merge consecutively
     df_merged = pd.merge(df_loyd, df_biased, on=merge_keys)
     df_merged = pd.merge(df_merged, df_uniform, on=merge_keys)
-    df_merged = pd.merge(df_merged, df_egb, on=merge_keys)
-    df_merged = pd.merge(df_merged, df_lightweight, on=merge_keys)
-    df_merged = pd.merge(df_merged, df_ranked, on=merge_keys)
-    df_merged = pd.merge(df_merged, df_kchen, on=merge_keys)
 
     # filer for specific dataset
-    df_merged = df_merged[df_merged['Dataset'] == 'balloons']
+    # df_merged = df_merged[df_merged['Dataset'] == 'uber']
 
     global_df = df_merged
 
@@ -156,7 +145,7 @@ def plot_lines_k():
     df = global_df.copy()
 
     # Average the time across all Q budgets to show how scaling K impacts total runtime
-    agg_k = df.groupby('Clusters')[['Cost_Loyd', 'Cost_Biased', 'Cost_Uniform', 'Cost_Egb', 'Cost_Lightweight', 'Cost_Ranked', 'Cost_Kchen']].mean().reset_index()
+    agg_k = df.groupby('Clusters')[['Cost_Loyd', 'Cost_Biased', 'Cost_Uniform']].mean().reset_index()
     
     plt.figure(figsize=(10, 6))
     
@@ -164,11 +153,6 @@ def plot_lines_k():
     plt.plot(agg_k['Clusters'], agg_k['Cost_Loyd'], marker='o', label='Standard Lloyd', color='#d62728', linewidth=2.5)
     plt.plot(agg_k['Clusters'], agg_k['Cost_Biased'], marker='s', label='Biased Coreset', color='#1f77b4', linewidth=2.5)
     plt.plot(agg_k['Clusters'], agg_k['Cost_Uniform'], marker='^', label='Uniform Coreset', color='#2ca02c', linewidth=2.5)
-    plt.plot(agg_k['Clusters'], agg_k['Cost_Egb'], marker='^', label='EGB Coreset', color='#eed142', linewidth=2.5)
-    plt.plot(agg_k['Clusters'], agg_k['Cost_Lightweight'], marker='^', label='Lightweight Coreset', color='#ffa43d', linewidth=2.5)
-    plt.plot(agg_k['Clusters'], agg_k['Cost_Ranked'], marker='^', label='Ranked Coreset', color="#42eed4", linewidth=2.5)
-    plt.plot(agg_k['Clusters'], agg_k['Cost_Kchen'], marker='^', label='Kchen Coreset', color="#7842ee", linewidth=2.5)
-
 
     plt.title('Cost Comparison Scaling (k)')
     plt.xlabel('Number of Clusters (k)')
@@ -188,7 +172,7 @@ def plot_lines_q():
     df = global_df.copy()
 
     # Average the time across all Q budgets
-    agg_k = df.groupby('Budget')[['Cost_Loyd', 'Cost_Biased', 'Cost_Uniform', 'Cost_Egb', 'Cost_Lightweight', 'Cost_Ranked', 'Cost_Kchen']].mean().reset_index()
+    agg_k = df.groupby('Budget')[['Cost_Loyd', 'Cost_Biased', 'Cost_Uniform']].mean().reset_index()
     
     plt.figure(figsize=(10, 6))
     
@@ -196,10 +180,6 @@ def plot_lines_q():
     plt.plot(agg_k['Budget'], agg_k['Cost_Loyd'], marker='o', label='Standard Lloyd', color='#d62728', linewidth=2.5)
     plt.plot(agg_k['Budget'], agg_k['Cost_Biased'], marker='s', label='Biased Coreset', color='#1f77b4', linewidth=2.5)
     plt.plot(agg_k['Budget'], agg_k['Cost_Uniform'], marker='^', label='Uniform Coreset', color='#2ca02c', linewidth=2.5)
-    plt.plot(agg_k['Budget'], agg_k['Cost_Egb'], marker='^', label='EGB Coreset', color="#eed142", linewidth=2.5)
-    plt.plot(agg_k['Budget'], agg_k['Cost_Lightweight'], marker='^', label='Lightweight Coreset', color="#ffa43d", linewidth=2.5)
-    plt.plot(agg_k['Budget'], agg_k['Cost_Ranked'], marker='^', label='Ranked Coreset', color="#42eed4", linewidth=2.5)
-    plt.plot(agg_k['Budget'], agg_k['Cost_Kchen'], marker='^', label='Kchen Coreset', color="#7842ee", linewidth=2.5)
 
     plt.title('Cost Comparison Scaling |Q|')
     plt.xlabel('Coreset Size |Q|')
@@ -215,6 +195,41 @@ def plot_lines_q():
 
 
 
+def plot_violin():
+    df = global_df.copy()
+    
+    # Calculate the ratio
+    df['Cost_Ratio'] = df['Cost_Biased'] / df['Cost_Loyd']
+    
+    plt.figure(figsize=(12, 6))
+    
+    # Create the violin plot
+    sns.violinplot(
+        data=df, 
+        x='Dataset', 
+        y='Cost_Ratio', 
+        hue='Dataset',
+        legend=False,
+        palette='viridis', 
+        inner='quartile',
+    )
+    
+    # draw a line at 1.0
+    plt.axhline(y=1.0, color='black', linestyle='--', linewidth=2, label='Loyd')
+    
+    plt.title('Biased Coreset Error Distribution by Dataset')
+    plt.xlabel('Dataset')
+    plt.ylabel('Cost Ratio (Coreset / Lloyd)')
+    plt.legend()
+    plt.grid(True, linestyle='--', alpha=0.5, axis='y')
+    
+    out_file = os.path.join("metrics/cost", "cost_violin_datasets.png")
+    plt.savefig(out_file, dpi=300, bbox_inches='tight')
+    plt.close()
+    print(f"Saved {out_file}")
+
+
+
 if __name__ == "__main__":
     merge_data()
 
@@ -225,3 +240,5 @@ if __name__ == "__main__":
     plot_lines_k()
 
     plot_lines_q()
+    
+    plot_violin()

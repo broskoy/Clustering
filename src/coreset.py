@@ -6,8 +6,7 @@ from sklearn.metrics import pairwise_distances_argmin
 
 
 def get_initial_approximation(data, k, q):
-    # Grab a small subset to make initialization lightning fast.
-    # We floor the subset at 1024 to prevent math errors on very small Q budgets.
+    # grab a small subset to make initialization fast
     subset_size = min(len(data), max(1024, q))
     indices = np.random.choice(len(data), size=subset_size, replace=False)
     subset = data[indices]
