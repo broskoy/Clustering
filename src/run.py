@@ -17,8 +17,8 @@ k_values = [2, 4, 8, 16, 32, 64]
 q_budgets = [64, 128, 256, 512, 1024, 2048, 4096]
 
 # Feature Toggles
-enable_metrics = True
-enable_output = False
+enable_metrics = False
+enable_output = True
 
 
 

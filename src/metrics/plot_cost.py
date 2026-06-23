@@ -66,7 +66,7 @@ def plot_biased_heatmap():
     # color gradient from green to red
     colors = ["#47c94b","#caf363" , "#ffdd60", "#f39f51", "#e16153"]
     custom_cmap = LinearSegmentedColormap.from_list("custom_RdYlGn", colors)
-    plt.imshow(pivot_table.values, cmap=custom_cmap, aspect='auto', vmin=1.0, vmax=2.5)
+    plt.imshow(pivot_table.values, cmap=custom_cmap, aspect='auto', vmin=1.0, vmax=2)
     
     # Add the text annotations inside the boxes
     for i in range(pivot_table.shape[0]):
